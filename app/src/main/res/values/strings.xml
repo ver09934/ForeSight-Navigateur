@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Navigateur</string>
+    <string name="button_go_to_map">Go to Map</string>
 </resources>
