@@ -1,5 +1,6 @@
 package com.foresight.navigateur;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +15,8 @@ public class MainActivity extends AppCompatActivity {
 
     /** Called when the user taps the Send button */
     public void openMap(View view) {
-        // Do something in response to button
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
     }
-
-    
 
 }
