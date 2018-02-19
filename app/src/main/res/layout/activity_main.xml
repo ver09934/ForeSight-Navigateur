@@ -10,6 +10,7 @@
         android:id="@+id/button"
         android:layout_width="187dp"
         android:layout_height="78dp"
+        android:onClick="openMap"
         android:text="@string/button_go_to_map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
