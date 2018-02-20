@@ -26,12 +26,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public static final CameraPosition rohan_in =
             new CameraPosition.Builder().target(rohan)
-                    .zoom(15)
+                    .zoom(16)
                     .build();
 
     public static final CameraPosition rohan_out =
             new CameraPosition.Builder().target(rohan)
-                    .zoom(10)
+                    .zoom(1)
                     .build();
 
     @Override
@@ -70,11 +70,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void zoomToRohan(View view) {
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_in));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_in), 5000, null);
     }
 
     public void zoomFromRohan(View view) {
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_out));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_out), 5000, null);
     }
 
 }
