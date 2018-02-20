@@ -10,20 +10,42 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/rohan_in"
+            android:id="@+id/function_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="zoomToRohan"
-            android:text="@string/zoom_to_rohan" />
+            android:onClick="functionOne"
+            android:text="@string/function_one" />
 
         <Button
-            android:id="@+id/rohan_out"
+            android:id="@+id/function_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="zoomFromRohan"
-            android:text="@string/zoom_from_rohan" />
+            android:onClick="functionTwo"
+            android:text="@string/function_two" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/function_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="functionThree"
+            android:text="@string/function_three" />
+
+        <Button
+            android:id="@+id/function_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="functionFour"
+            android:text="@string/function_four" />
 
     </LinearLayout>
 

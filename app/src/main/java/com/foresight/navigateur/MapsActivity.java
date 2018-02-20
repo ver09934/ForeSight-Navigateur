@@ -7,7 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.view.View; //Might take out
+import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -25,21 +26,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
-    private static final LatLng rohan = new LatLng(42.780970, -73.841671);
-
-    public static final CameraPosition rohan_in =
-            new CameraPosition.Builder().target(rohan)
-                    .zoom(16)
-                    .build();
-
-    public static final CameraPosition rohan_out =
-            new CameraPosition.Builder().target(rohan)
-                    .zoom(10)
-                    .build();
-
     private FusedLocationProviderClient mFusedLocationClient;
-
-    private Location testLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,43 +54,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        /*
+
         // Show blue location dot and thingy to bring you there
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
-        */
 
-        try {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                testLocation = location;
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(testLocation.getLatitude(), testLocation.getLongitude())).title("Marker at your location"));
+        functionOne(getCurrentFocus());
 
-                            }
-                        }
-                    });
-        } catch (SecurityException e) {
-            e.printStackTrace();
+    }
+
+    Marker testMarker = null;
+    public static CameraPosition currentLocationCameraPosition = null;
+
+    // UPDATE CURRENT LOCATION MARKER
+    public void functionOne(View view) {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+
+
+                        // If there is already a current location marker
+                        if (testMarker != null)
+                            testMarker.remove();
+
+                        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                        testMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Your Current Location"));
+                        currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(17).build();
+                    }
+                }
+            });
+
         }
-
-
-        mMap.addMarker(new MarkerOptions().position(rohan).title("Marker at Rohan's House"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(rohan));
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(rohan_out));
     }
 
-    public void zoomToRohan(View view) {
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_in), 3000, null);
+    // ZOOM TO CURRENT LOCATION
+    public void functionTwo(View view) {
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition), 3000, null);
     }
 
-    public void zoomFromRohan(View view) {
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_out), 3000, null);
-    }
+    public void functionThree(View view) {}
+
+    public void functionFour(View view) {}
 
 }
