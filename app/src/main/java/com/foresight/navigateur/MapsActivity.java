@@ -2,12 +2,15 @@ package com.foresight.navigateur;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View; //Might take out
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -15,13 +18,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 //--------------------------------------------------------
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
-
     private static final LatLng rohan = new LatLng(42.780970, -73.841671);
 
     public static final CameraPosition rohan_in =
@@ -34,6 +37,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .zoom(10)
                     .build();
 
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    private Location testLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +49,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
     /**
@@ -58,11 +68,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         /*
+        // Show blue location dot and thingy to bring you there
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
         */
+
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                testLocation = location;
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(testLocation.getLatitude(), testLocation.getLongitude())).title("Marker at your location"));
+
+                            }
+                        }
+                    });
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+
 
         mMap.addMarker(new MarkerOptions().position(rohan).title("Marker at Rohan's House"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(rohan));
