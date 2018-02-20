@@ -6,6 +6,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View; //Might take out
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +22,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
 
+    private static final LatLng rohan = new LatLng(42.780970, -73.841671);
+
+    public static final CameraPosition rohan_in =
+            new CameraPosition.Builder().target(rohan)
+                    .zoom(15)
+                    .build();
+
+    public static final CameraPosition rohan_out =
+            new CameraPosition.Builder().target(rohan)
+                    .zoom(10)
+                    .build();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +43,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     /**
      * Manipulates the map once available.
@@ -45,17 +57,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        /*
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
+        */
 
-        LatLng rohan = new LatLng(42.780970, -73.841671);
         mMap.addMarker(new MarkerOptions().position(rohan).title("Marker at Rohan's House"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(rohan));
-
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(5));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 15000, null);
-
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(rohan));
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(rohan_out));
     }
+
+    public void zoomToRohan(View view) {
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_in));
+    }
+
+    public void zoomFromRohan(View view) {
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(rohan_out));
+    }
+
 }

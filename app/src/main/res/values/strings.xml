@@ -2,4 +2,6 @@
     <string name="app_name">Navigateur</string>
     <string name="button_go_to_map">Go to Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="zoom_to_rohan">Zoom to Rohan's House</string>
+    <string name="zoom_from_rohan">Zoom out from Rohan's House</string>
 </resources>
