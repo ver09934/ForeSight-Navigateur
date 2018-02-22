@@ -131,7 +131,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapLongClick(LatLng point) {
         if (!pointSelectionIsLocked) {
             mMapInstructionsView.setText(getString((R.string.map_instructions_point_pressed), point.latitude, point.longitude));
-            selectedPointMarker = addSimpleMarker(point);
+            selectedPointMarker = addMarkerFromLatLng(point);
         }
         pointSelectionIsLocked = true;
     }
@@ -184,16 +184,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return markerOut;
     }
 
-    private Marker addSimpleMarker(Location inputLocation) {
-        // Add marker
-        Double lat = inputLocation.getLatitude();
-        Double lon = inputLocation.getLongitude();
-        LatLng myLatLng = new LatLng(lat, lon);
-        return mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
-    }
-
     // Let's overload this thing!
-    private Marker addSimpleMarker(LatLng inputLatLng) {
+    private Marker addMarkerFromLatLng(LatLng inputLatLng) {
         return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(inputLatLng.latitude + ", " + inputLatLng.longitude)); // Label location with coordinates
     }
 
