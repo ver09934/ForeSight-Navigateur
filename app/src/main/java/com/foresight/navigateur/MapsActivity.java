@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,12 +63,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         functionOne(getCurrentFocus());
+        createLocationRequest();
+    }
 
+    protected void createLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     Marker testMarker = null;
-    public static CameraPosition currentLocationCameraPosition = null;
-
     // UPDATE CURRENT LOCATION MARKER
     public void functionOne(View view) {
 
@@ -78,7 +84,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onSuccess(Location location) {
                     if (location != null) {
 
-
                         // If there is already a current location marker
                         if (testMarker != null)
                             testMarker.remove();
@@ -86,7 +91,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                         testMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Your Current Location"));
-                        currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(17).build();
+                        CameraPosition currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(17).build();
+
+                        functionTwo(getCurrentFocus());
+
+                        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition), 3000, null);
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
                     }
                 }
             });
@@ -94,10 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    // ZOOM TO CURRENT LOCATION
-    public void functionTwo(View view) {
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition), 3000, null);
-    }
+    public void functionTwo(View view) {    }
 
     public void functionThree(View view) {}
 
