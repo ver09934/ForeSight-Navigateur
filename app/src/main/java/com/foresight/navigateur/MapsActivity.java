@@ -27,7 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 //--------------------------------------------------------
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
 
@@ -119,6 +119,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
     }
 
+   //------------------------Map Long-Clicking---------------------------
+
+    @Override
+    public void onMapLongClick(LatLng point) {
+        //mTapTextView.setText("long pressed, point=" + point);
+        addSimpleMarker(point);
+    }
+
     //------------------------User Functions------------------------------
 
 
@@ -147,14 +155,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private Marker addMarkerAndZoomTo(Location inputLocation) {
+        // Add marker
         Double lat = inputLocation.getLatitude();
         Double lon = inputLocation.getLongitude();
         LatLng myLatLng = new LatLng(lat, lon);
         Marker markerOut = mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
+        //Create Camera position and go to it
         CameraPosition currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(17).build(); // Zoom 17 is pretty close, see maps api documentation
         //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition), 3000, null);
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
+        // Return marker
         return markerOut;
+    }
+
+    private Marker addSimpleMarker(Location inputLocation) {
+        // Add marker
+        Double lat = inputLocation.getLatitude();
+        Double lon = inputLocation.getLongitude();
+        LatLng myLatLng = new LatLng(lat, lon);
+        return mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
+    }
+
+    // Let's overload this thing!
+    private Marker addSimpleMarker(LatLng inputLatLng) {
+        return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(inputLatLng.latitude + ", " + inputLatLng.longitude)); // Label location with coordinates
     }
 
     public void functionTwo(View view) {    }
