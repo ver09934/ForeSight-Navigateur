@@ -39,6 +39,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     boolean paused = false;
 
+    Toast t;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     addMarkerAndZoomTo(location); // Update UI with location data
 
                     if (!paused) {
-                        Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
+                        t = Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG);
+                        t.show();
                         //Toast.makeText(getApplicationContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
                     }
 
@@ -94,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         paused = true;
+        t.cancel();
     }
 
     @Override
