@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.PointerIcon;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -131,30 +132,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
    //------------------------Map Long-Clicking to Select Destination---------------------------
 
     private boolean pointSelectionIsLocked = false;
+    private Marker selectedPointMarker;
 
     @Override
     public void onMapLongClick(LatLng point) {
         if (!pointSelectionIsLocked) {
             mMapInstructionsView.setText(getString((R.string.point_pressed), point.latitude, point.longitude));
-            markerArrayList.add(addSimpleMarker(point));
+            selectedPointMarker = addSimpleMarker(point);
         }
         pointSelectionIsLocked = true;
     }
 
-    private ArrayList<Marker> markerArrayList = new ArrayList<>();
-
-    public void clearManualMarkers() {
-        for (Marker marker: markerArrayList) {
-            marker.remove();
-        }
-        markerArrayList.clear();
-    }
-
     // Reset end location and stop navigation
-    public void resetPointSelection() {}
-
-    // set location_locked to true
-    // Method to reset location_locked and remove current location
+    public void resetPointSelection() {
+        selectedPointMarker.remove();
+        pointSelectionIsLocked = false;
+    }
 
     //------------------------User Functions------------------------------
 
@@ -211,7 +204,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void functionTwo(View view) {
-        clearManualMarkers();
+        resetPointSelection();
     }
 
     public void functionThree(View view) {}
