@@ -43,8 +43,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     boolean paused = false;
 
-    Toast t; // TODO: Reset this to previous, simpler system
-
     private TextView mMapInstructionsView;
 
     @Override
@@ -89,8 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     addMarkerAndZoomTo(location); // Update UI with location data
 
                     if (!paused) {
-                        t = Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG);
-                        t.show();
+                        Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
                         //Toast.makeText(getApplicationContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
                     }
 
@@ -107,7 +104,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         paused = true;
-        t.cancel();
     }
 
     @Override
