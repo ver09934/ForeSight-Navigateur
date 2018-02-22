@@ -7,7 +7,7 @@
     <string name="function_three">Function 3</string>
     <string name="function_four">Function 4</string>
     <string name="map_instructions">Select the location you would like to travel to from your current location by long-clicking.</string>
-    <string name="point_pressed">
+    <string name="map_instructions_point_pressed">
         Selected location coordinates: <xliff:g id="sel_lat">%1$f</xliff:g>, <xliff:g id="sel_lon">%2$f</xliff:g>
     </string>
     <!-- Or simply: Selected location coordinates: %1$f, %2$f -->

@@ -7,7 +7,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.view.PointerIcon;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +25,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.ArrayList;
 
 //--------------------------------------------------------
 
@@ -133,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(LatLng point) {
         if (!pointSelectionIsLocked) {
-            mMapInstructionsView.setText(getString((R.string.point_pressed), point.latitude, point.longitude));
+            mMapInstructionsView.setText(getString((R.string.map_instructions_point_pressed), point.latitude, point.longitude));
             selectedPointMarker = addSimpleMarker(point);
         }
         pointSelectionIsLocked = true;
@@ -142,6 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Reset end location and stop navigation
     public void resetPointSelection() {
         selectedPointMarker.remove();
+        mMapInstructionsView.setText(getString(R.string.map_instructions);
         pointSelectionIsLocked = false;
     }
 
