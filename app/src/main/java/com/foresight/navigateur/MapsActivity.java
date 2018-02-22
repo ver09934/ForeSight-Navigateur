@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,7 +42,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     boolean paused = false;
 
-    Toast t;
+    Toast t; // TODO: Reset this to previous, simpler system
+
+    private TextView mMapInstructionsView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mMapInstructionsView = findViewById(R.id.map_instructions_text);
     }
 
     /**
@@ -123,12 +128,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
     }
 
-   //------------------------Map Long-Clicking---------------------------
+   //------------------------Map Long-Clicking to Select Destination---------------------------
+
+    private boolean pointSelectionIsLocked = false;
 
     @Override
     public void onMapLongClick(LatLng point) {
-        //mTapTextView.setText("long pressed, point=" + point);
-        markerArrayList.add(addSimpleMarker(point));
+        if (!pointSelectionIsLocked) {
+            //mMapInstructionsView.setText(String.format(getString((R.string.point_pressed), point.latitude, point.longitude)));
+            markerArrayList.add(addSimpleMarker(point));
+        }
+        pointSelectionIsLocked = true;
     }
 
     private ArrayList<Marker> markerArrayList = new ArrayList<>();
@@ -137,7 +147,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (Marker marker: markerArrayList) {
             marker.remove();
         }
+        markerArrayList.clear();
     }
+
+    // Reset end location and stop navigation
+    public void resetPointSelection() {}
+
+    // set location_locked to true
+    // Method to reset location_locked and remove current location
 
     //------------------------User Functions------------------------------
 

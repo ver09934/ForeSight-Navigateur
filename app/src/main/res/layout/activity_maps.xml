@@ -50,8 +50,8 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/camera_text"
-        android:text="@string/map_directions"
+        android:id="@+id/map_instructions_text"
+        android:text="@string/map_instructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
