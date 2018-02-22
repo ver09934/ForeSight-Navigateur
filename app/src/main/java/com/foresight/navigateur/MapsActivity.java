@@ -91,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
+
+        mMap.setOnMapLongClickListener(this);
     }
 
     @Override
