@@ -139,7 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Reset end location and stop navigation
     public void resetPointSelection() {
         selectedPointMarker.remove();
-        mMapInstructionsView.setText(getString(R.string.map_instructions);
+        mMapInstructionsView.setText(getString(R.string.map_instructions));
         pointSelectionIsLocked = false;
     }
 
