@@ -3,6 +3,7 @@ package com.foresight.navigateur;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -87,8 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         setupLocationRequest();
 
-        startLocationUpdates();
-
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -99,6 +98,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
+
+        startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated!
+
     }
 
     protected void setupLocationRequest() {
@@ -119,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null /* Looper */);
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper());
     }
 
     //------------------------User Functions------------------------------
