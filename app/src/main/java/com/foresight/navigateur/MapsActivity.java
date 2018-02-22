@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -37,7 +39,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LocationCallback mLocationCallback;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,22 +49,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        /*
-        startLocationUpdates();
-
-        mLocationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    // ...
-                    addMarkerAndZoomTo(location);
-                }
-            }
-        };
-        */
-
     }
 
     /**
@@ -84,23 +69,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
         }
 
-        //functionOne(getCurrentFocus());
-
         setupLocationRequest();
 
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    // ...
-                    addMarkerAndZoomTo(location);
+                    addMarkerAndZoomTo(location); // Update UI with location data
+                    //Toast.makeText(getApplicationContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
                 }
             }
         };
 
-        startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated!
-
+        startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
     }
 
     protected void setupLocationRequest() {
@@ -126,7 +108,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //------------------------User Functions------------------------------
 
+
     Marker testMarker = null;
+    // Call in onMapReady with functionOne(getCurrentFocus());
     // UPDATE CURRENT LOCATION MARKER
     public void functionOne(View view) {
 
