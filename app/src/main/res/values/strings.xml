@@ -6,4 +6,5 @@
     <string name="function_two">Function 2</string>
     <string name="function_three">Function 3</string>
     <string name="function_four">Function 4</string>
+    <string name="map_directions">This is an extra long string that I made in order to see what happens when a string in a text view box overflow - does the size of the text box expand?</string>
 </resources>

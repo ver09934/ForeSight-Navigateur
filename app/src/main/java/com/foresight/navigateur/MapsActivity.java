@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+
 //--------------------------------------------------------
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
@@ -126,7 +128,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(LatLng point) {
         //mTapTextView.setText("long pressed, point=" + point);
-        addSimpleMarker(point);
+        markerArrayList.add(addSimpleMarker(point));
+    }
+
+    private ArrayList<Marker> markerArrayList = new ArrayList<>();
+
+    public void clearManualMarkers() {
+        for (Marker marker: markerArrayList) {
+            marker.remove();
+        }
     }
 
     //------------------------User Functions------------------------------
@@ -183,7 +193,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(inputLatLng.latitude + ", " + inputLatLng.longitude)); // Label location with coordinates
     }
 
-    public void functionTwo(View view) {    }
+    public void functionTwo(View view) {
+        clearManualMarkers();
+    }
 
     public void functionThree(View view) {}
 

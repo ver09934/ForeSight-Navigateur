@@ -49,6 +49,12 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/camera_text"
+        android:text="@string/map_directions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
