@@ -135,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(LatLng point) {
         if (!pointSelectionIsLocked) {
-            //mMapInstructionsView.setText(String.format(getString((R.string.point_pressed), point.latitude, point.longitude)));
+            mMapInstructionsView.setText(getString((R.string.point_pressed), point.latitude, point.longitude));
             markerArrayList.add(addSimpleMarker(point));
         }
         pointSelectionIsLocked = true;
