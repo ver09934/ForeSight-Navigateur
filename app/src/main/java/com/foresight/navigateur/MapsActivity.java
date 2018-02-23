@@ -200,28 +200,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //------------------------User Functions------------------------------
 
-
-    // Call in onMapReady with functionOne(getCurrentFocus());
-    // UPDATE CURRENT LOCATION MARKER
     public void functionOne(View view) {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-
-                        // If there is already a current location marker
-                        if (testMarker != null)
-                            testMarker.remove();
-
-                        testMarker = addMarkerAndZoomTo(location);
-                    }
-                }
-            });
-
-        }
     }
 
     private Marker addMarkerAndZoomTo(Location inputLocation) {
