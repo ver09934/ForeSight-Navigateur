@@ -62,6 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // For original zoom to location
     private boolean isFirstTime = true;
 
+    // Directions
+    DirectionsResult currentDirectionsResult = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +98,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         setupLocationRequest();
-
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -117,11 +118,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
-
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
 
         mMap.setOnMapLongClickListener(this);
-
     }
 
     protected void setupLocationRequest() {
@@ -151,7 +150,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //------------------------Directions-------------------------------------------------------
 
-
     private GeoApiContext getGeoContext() {
         return new GeoApiContext.Builder()
                 .connectTimeout(1, TimeUnit.SECONDS)
@@ -180,7 +178,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .departureTime(now)
                         .await();
                 */
-
                 DirectionsResult results = DirectionsApi
                         .newRequest(getGeoContext())
                         .mode(TravelMode.WALKING)
@@ -189,7 +186,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .departureTime(now)
                         .await();
 
-                Toast.makeText(getApplicationContext(), "It worked", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Directions obtained", Toast.LENGTH_LONG).show();
+                currentDirectionsResult = results;
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
             } catch (java.lang.InterruptedException e) {
@@ -258,14 +256,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //------------------------User Functions------------------------------
 
+    // Reset end point selection
     public void functionOne(View view) {
         resetPointSelection();
     }
 
+    // Request directions
     public void functionTwo(View view) {
         getNewDirectionsResult(currentLatLng, desiredLatLng);
     }
 
+    // Cancel navigation
     public void functionThree(View view) {}
 
     public void functionFour(View view) {}
