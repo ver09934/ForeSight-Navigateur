@@ -54,15 +54,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location currentLocation = null; // Set to null to start
     LatLng currentLatLng = null; // Set to null to start
 
-    // Marker at long-clicked location
-    private boolean pointSelectionIsLocked = false;
+    // Desired Location
     private Marker selectedPointMarker = null;
-
-    // Obtained by long-click
-    LatLng desiredLatLng = null;
+    LatLng selectedLatLng = null;
 
     // For original zoom to location
     private boolean isFirstTime = true;
+
+    private boolean navigationIsActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Future: origin and destination can also be exact address strings - get then using Places API
     private void getNewDirectionsResult(LatLng origin, LatLng destination) {
-        if (currentLatLng != null && desiredLatLng != null) {
+        if (currentLatLng != null && selectedLatLng != null) {
             // Weird solution for a weird problem
             com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(origin.latitude, origin.longitude);
             com.google.maps.model.LatLng convertedDestination = new com.google.maps.model.LatLng(destination.latitude, destination.longitude);
@@ -185,10 +184,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .departureTime(now)
                         .await();
 
-                Toast.makeText(getApplicationContext(), "Directions obtained", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Directions obtained", Toast.LENGTH_SHORT).show();
 
                 addMarkersToMap(results);
                 addPolyline(results);
+
+                navigationIsActive = true;
 
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
@@ -223,25 +224,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
+    public void stopNavigation() {
+        if (navigationIsActive) {
+            mMap.clear();
+            navigationIsActive = false;
+            addSelectedPointMarker();
+        }
+    }
+
    //------------------------Map Long-Clicking to Select Destination---------------------------
 
     @Override
     public void onMapLongClick(LatLng point) {
-        if (!pointSelectionIsLocked) {
+        if (selectedPointMarker != null && !navigationIsActive)
+            selectedPointMarker.remove();
+        if (!navigationIsActive) {
             mMapInstructionsView.setText(getString((R.string.map_instructions_point_pressed), point.latitude, point.longitude));
             selectedPointMarker = addMarkerFromLatLng(point);
-            desiredLatLng = point;
+            selectedLatLng = point;
         }
-        pointSelectionIsLocked = true;
     }
 
     // Reset end location and stop navigation
     private void resetPointSelection() {
-        if (selectedPointMarker != null)
-            selectedPointMarker.remove();
-        desiredLatLng = null;
-        mMapInstructionsView.setText(getString(R.string.map_instructions));
-        pointSelectionIsLocked = false;
+        if (!navigationIsActive) {
+            if (selectedPointMarker != null)
+                selectedPointMarker.remove();
+            selectedPointMarker = null;
+            selectedLatLng = null;
+            mMapInstructionsView.setText(getString(R.string.map_instructions));
+        }
     }
 
     private void removeSelectedPointMarker() {
@@ -249,6 +261,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             selectedPointMarker.remove();
             selectedPointMarker = null;
         }
+    }
+
+    private void addSelectedPointMarker() {
+        if (selectedLatLng != null)
+            selectedPointMarker = addMarkerFromLatLng(selectedLatLng);
     }
 
     //------------------------Camera Functions----------------------------
@@ -261,14 +278,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
     }
 
-    private Marker addMarkerAndZoomTo(Location inputLocation, float zoomLevel) {
-        // Add marker
+    private Marker addMarkerFromLocation(Location inputLocation) {
         Double lat = inputLocation.getLatitude();
         Double lon = inputLocation.getLongitude();
         LatLng myLatLng = new LatLng(lat, lon);
         Marker markerOut = mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
-        //Create Camera position and go to it
-        zoomTo(inputLocation, zoomLevel);
         return markerOut;
     }
 
@@ -292,11 +306,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Request directions
     public void functionTwo(View view) {
-        getNewDirectionsResult(currentLatLng, desiredLatLng);
+        getNewDirectionsResult(currentLatLng, selectedLatLng);
     }
 
     // Cancel navigation
-    public void functionThree(View view) {}
+    public void functionThree(View view) {
+        stopNavigation();
+    }
 
     public void functionFour(View view) {}
 

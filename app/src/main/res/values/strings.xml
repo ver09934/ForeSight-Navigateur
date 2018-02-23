@@ -2,9 +2,9 @@
     <string name="app_name">Navigateur</string>
     <string name="button_go_to_map">Go to Map</string>
     <string name="title_activity_maps">Map</string>
-    <string name="function_one">Function 1</string>
-    <string name="function_two">Function 2</string>
-    <string name="function_three">Function 3</string>
+    <string name="function_one">Clear Selected Point</string>
+    <string name="function_two">Get Route</string>
+    <string name="function_three">Stop Navigation</string>
     <string name="function_four">Function 4</string>
     <string name="map_instructions">Select location to travel to by long-clicking on map.</string>
     <string name="map_instructions_point_pressed">
