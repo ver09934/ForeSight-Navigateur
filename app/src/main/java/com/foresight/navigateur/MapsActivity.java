@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
@@ -151,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .readTimeout(1, TimeUnit.SECONDS)
                 .writeTimeout(1, TimeUnit.SECONDS)
                 .queryRateLimit(3)
-                .apiKey(getString(R.string.server_key))
+                .apiKey(getString(R.string.directions_key))
                 .build();
     }
 
@@ -164,13 +165,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             DateTime now = new DateTime();
             try {
-                DirectionsResult results = DirectionsApi
-                        .newRequest(getGeoContext())
+                DirectionsResult results = new DirectionsApiRequest(getGeoContext())
+                        //.newRequest(getGeoContext())
                         .mode(TravelMode.WALKING)
                         .origin(convertedOrigin)
                         .destination(convertedDestination)
                         .departureTime(now)
                         .await();
+                Toast.makeText(getApplicationContext(), "It worked", Toast.LENGTH_LONG).show();
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
             } catch (java.lang.InterruptedException e) {
