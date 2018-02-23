@@ -34,8 +34,6 @@ import org.joda.time.DateTime;
 
 import java.util.concurrent.TimeUnit;
 
-//--------------------------------------------------------
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
@@ -49,6 +47,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     boolean paused = false;
 
     private TextView mMapInstructionsView;
+
+    Location currentLocation = null;
+    LatLng currentLatLng = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
-                    addMarkerAndZoomTo(location); // Update UI with location data
+                    //addMarkerAndZoomTo(location); // Update UI with location data
+
+                    currentLocation = location;
+                    currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                     if (!paused) {
                         Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
