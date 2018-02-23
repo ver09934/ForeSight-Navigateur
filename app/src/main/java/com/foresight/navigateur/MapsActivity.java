@@ -25,6 +25,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
+
+import org.joda.time.DateTime;
+
+import java.util.concurrent.TimeUnit;
 
 //--------------------------------------------------------
 
@@ -95,6 +103,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
 
         mMap.setOnMapLongClickListener(this);
+
+        DateTime now = new DateTime();
+
+        try {
+            DirectionsResult results = DirectionsApi.newRequest(getGeoContext()).mode(TravelMode.WALKING).origin(new com.google.maps.model.LatLng(0, 0)).destination(new com.google.maps.model.LatLng(34, 41)).departureTime(now).await();
+        }
+        catch (com.google.maps.errors.ApiException e) {}
+        catch (java.lang.InterruptedException e) {}
+        catch (java.io.IOException e) {}
     }
 
     @Override
@@ -122,10 +139,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
     }
 
+    //------------------------Directions-------------------------------------------------------
+
+
+    private GeoApiContext getGeoContext() {
+        return new GeoApiContext.Builder()
+                .connectTimeout(1, TimeUnit.SECONDS)
+                .readTimeout(1, TimeUnit.SECONDS)
+                .writeTimeout(1, TimeUnit.SECONDS)
+                .queryRateLimit(3)
+                .apiKey(getString(R.string.google_maps_key))
+                .build();
+    }
+
    //------------------------Map Long-Clicking to Select Destination---------------------------
 
     private boolean pointSelectionIsLocked = false;
-    private Marker selectedPointMarker;
+    private Marker selectedPointMarker = null;
 
     @Override
     public void onMapLongClick(LatLng point) {
@@ -138,7 +168,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Reset end location and stop navigation
     public void resetPointSelection() {
-        selectedPointMarker.remove();
+        if (selectedPointMarker != null)
+            selectedPointMarker.remove();
         mMapInstructionsView.setText(getString(R.string.map_instructions));
         pointSelectionIsLocked = false;
     }
@@ -193,6 +224,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         resetPointSelection();
     }
 
+    // Generate directions
     public void functionThree(View view) {}
 
     public void functionFour(View view) {}
