@@ -59,6 +59,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Obtained by long-click
     LatLng desiredLatLng = null;
 
+    // For original zoom to location
+    private boolean isFirstTime = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = location;
                     currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
+                    zoomFirstTime();
+
                     if (!paused) {
                         // Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
                         // Toast.makeText(getApplicationContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
@@ -116,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
 
         mMap.setOnMapLongClickListener(this);
+
     }
 
     protected void setupLocationRequest() {
@@ -165,6 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             DateTime now = new DateTime();
             try {
+                /*
                 DirectionsResult results = new DirectionsApiRequest(getGeoContext())
                         //.newRequest(getGeoContext())
                         .mode(TravelMode.WALKING)
@@ -172,6 +179,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .destination(convertedDestination)
                         .departureTime(now)
                         .await();
+                */
+
+                DirectionsResult results = DirectionsApi
+                        .newRequest(getGeoContext())
+                        .mode(TravelMode.WALKING)
+                        .origin(convertedOrigin)
+                        .destination(convertedDestination)
+                        .departureTime(now)
+                        .await();
+
                 Toast.makeText(getApplicationContext(), "It worked", Toast.LENGTH_LONG).show();
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
@@ -209,22 +226,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //------------------------Camera Functions----------------------------
 
-    private Marker addMarkerAndZoomTo(Location inputLocation) {
+    private void zoomTo(Location inputLocation, float zoomLevel) {
+        Double lat = inputLocation.getLatitude();
+        Double lon = inputLocation.getLongitude();
+        LatLng myLatLng = new LatLng(lat, lon);
+        CameraPosition currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(zoomLevel).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
+    }
+
+    private Marker addMarkerAndZoomTo(Location inputLocation, float zoomLevel) {
         // Add marker
         Double lat = inputLocation.getLatitude();
         Double lon = inputLocation.getLongitude();
         LatLng myLatLng = new LatLng(lat, lon);
         Marker markerOut = mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
         //Create Camera position and go to it
-        CameraPosition currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(17).build(); // Zoom 17 is pretty close, see maps api documentation
-        //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition), 3000, null);
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
-        // Return marker
+        zoomTo(inputLocation, zoomLevel);
         return markerOut;
     }
 
     private Marker addMarkerFromLatLng(LatLng inputLatLng) {
         return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(inputLatLng.latitude + ", " + inputLatLng.longitude)); // Label location with coordinates
+    }
+
+    public void zoomFirstTime() {
+        if (isFirstTime) {
+            zoomTo(currentLocation, 15);
+            isFirstTime = false;
+        }
     }
 
     //------------------------User Functions------------------------------
