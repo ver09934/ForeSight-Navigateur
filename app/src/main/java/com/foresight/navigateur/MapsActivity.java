@@ -106,6 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = location;
                     currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
+                    //System.out.println("BEARING BOI: " + location.getBearing());
+                    Toast.makeText(getApplicationContext(), "Bearing: " + location.getBearing(), Toast.LENGTH_SHORT).show();
+
                     zoomFirstTime();
 
                     if (!paused) {
