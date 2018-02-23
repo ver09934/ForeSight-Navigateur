@@ -151,41 +151,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .readTimeout(1, TimeUnit.SECONDS)
                 .writeTimeout(1, TimeUnit.SECONDS)
                 .queryRateLimit(3)
-                .apiKey(getString(R.string.google_maps_key))
+                .apiKey(getString(R.string.server_key))
                 .build();
     }
 
     // Future: origin and destination can also be exact address strings - get then using Places API
     private void getNewDirectionsResult(LatLng origin, LatLng destination) {
-        // Weird solution for a weird problem
-        com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(origin.latitude, origin.longitude);
-        com.google.maps.model.LatLng convertedDestination = new com.google.maps.model.LatLng(destination.latitude, destination.longitude);
+        if (currentLatLng != null && desiredLatLng != null) {
+            // Weird solution for a weird problem
+            com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(origin.latitude, origin.longitude);
+            com.google.maps.model.LatLng convertedDestination = new com.google.maps.model.LatLng(destination.latitude, destination.longitude);
 
-        DateTime now = new DateTime();
-        try {
-            DirectionsResult results = DirectionsApi
-                    .newRequest(getGeoContext())
-                    .mode(TravelMode.WALKING)
-                    .origin(convertedOrigin)
-                    .destination(convertedDestination)
-                    .departureTime(now)
-                    .await();
-            Toast.makeText(getApplicationContext(), "The doot worked", Toast.LENGTH_SHORT).show();
-            //return results;
+            DateTime now = new DateTime();
+            try {
+                DirectionsResult results = DirectionsApi
+                        .newRequest(getGeoContext())
+                        .mode(TravelMode.WALKING)
+                        .origin(convertedOrigin)
+                        .destination(convertedDestination)
+                        .departureTime(now)
+                        .await();
+            } catch (com.google.maps.errors.ApiException e) {
+                e.printStackTrace();
+            } catch (java.lang.InterruptedException e) {
+                e.printStackTrace();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
         }
-        catch (com.google.maps.errors.ApiException e) {
-            Toast.makeText(getApplicationContext(), "The doot failed 1", Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(getApplicationContext(), "Current or destination LatLng are null", Toast.LENGTH_LONG).show();
         }
-        catch (java.lang.InterruptedException e) {
-            Toast.makeText(getApplicationContext(), "The doot failed 2", Toast.LENGTH_SHORT).show();
-        }
-        catch (java.io.IOException e) {
-            Toast.makeText(getApplicationContext(), "The doot failed 3", Toast.LENGTH_SHORT).show();
-        }
-        // Should probably do an actual something if an exception is caught
-
-        // This is a BAD SOLUTION! DO NOT TRY AT HOME!
-        // return getNewDirectionsResult(origin, destination);
     }
 
    //------------------------Map Long-Clicking to Select Destination---------------------------
@@ -236,10 +232,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void functionTwo(View view) {
-        if (currentLatLng != null && desiredLatLng != null)
-            getNewDirectionsResult(currentLatLng, desiredLatLng);
-        else
-            Toast.makeText(getApplicationContext(), "Current or destination LatLng are null", Toast.LENGTH_LONG).show();
+        getNewDirectionsResult(currentLatLng, desiredLatLng);
     }
 
     public void functionThree(View view) {}
