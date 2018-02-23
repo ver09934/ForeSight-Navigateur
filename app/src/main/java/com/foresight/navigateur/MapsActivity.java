@@ -24,14 +24,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
-import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
+import com.google.maps.android.PolyUtil;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
@@ -61,9 +63,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // For original zoom to location
     private boolean isFirstTime = true;
-
-    // Directions
-    DirectionsResult currentDirectionsResult = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +186,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .await();
 
                 Toast.makeText(getApplicationContext(), "Directions obtained", Toast.LENGTH_LONG).show();
-                currentDirectionsResult = results;
+
+                addMarkersToMap(results);
+                addPolyline(results);
+
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
             } catch (java.lang.InterruptedException e) {
@@ -199,6 +201,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else {
             Toast.makeText(getApplicationContext(), "Current or destination LatLng are null", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void addMarkersToMap(DirectionsResult results) {
+        removeSelectedPointMarker();
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(results.routes[0].legs[0].startLocation.lat, results.routes[0].legs[0].startLocation.lng))
+                .title(results.routes[0].legs[0].startAddress));
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(results.routes[0].legs[0].endLocation.lat, results.routes[0].legs[0].endLocation.lng))
+                .title(results.routes[0].legs[0].endAddress)
+                .snippet(getEndLocationTitle(results)));
+    }
+
+    private String getEndLocationTitle(DirectionsResult results){
+        return  "Time: "+ results.routes[0].legs[0].duration.humanReadable + "   Distance: " + results.routes[0].legs[0].distance.humanReadable;
+    }
+
+    private void addPolyline(DirectionsResult results) {
+        List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
+        mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
    //------------------------Map Long-Clicking to Select Destination---------------------------
@@ -214,12 +236,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Reset end location and stop navigation
-    public void resetPointSelection() {
+    private void resetPointSelection() {
         if (selectedPointMarker != null)
             selectedPointMarker.remove();
         desiredLatLng = null;
         mMapInstructionsView.setText(getString(R.string.map_instructions));
         pointSelectionIsLocked = false;
+    }
+
+    private void removeSelectedPointMarker() {
+        if (selectedPointMarker != null) {
+            selectedPointMarker.remove();
+            selectedPointMarker = null;
+        }
     }
 
     //------------------------Camera Functions----------------------------
@@ -249,7 +278,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void zoomFirstTime() {
         if (isFirstTime) {
-            zoomTo(currentLocation, 15);
+            zoomTo(currentLocation, 13);
             isFirstTime = false;
         }
     }
