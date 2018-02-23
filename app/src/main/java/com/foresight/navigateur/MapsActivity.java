@@ -36,20 +36,28 @@ import java.util.concurrent.TimeUnit;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
 
+    // General
     private GoogleMap mMap;
-
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private LocationRequest mLocationRequest;
-
-    private LocationCallback mLocationCallback;
-
+    // Assorted
     boolean paused = false;
-
     private TextView mMapInstructionsView;
 
-    Location currentLocation = null;
-    LatLng currentLatLng = null;
+    // Using play services location
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+
+    // Locations obtained using play services location
+    Location currentLocation = null; // Set to null to start
+    LatLng currentLatLng = null; // Set to null to start
+
+    // Marker at long-clicked location
+    private boolean pointSelectionIsLocked = false;
+    private Marker selectedPointMarker = null;
+
+    // Function 1 - using old current position
+    Marker testMarker = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
-                    //addMarkerAndZoomTo(location); // Update UI with location data
+                    // addMarkerAndZoomTo(location); // Update UI with location data
 
                     currentLocation = location;
                     currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -107,15 +115,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
 
         mMap.setOnMapLongClickListener(this);
+    }
 
-        DateTime now = new DateTime();
+    protected void setupLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
-        try {
-            DirectionsResult results = DirectionsApi.newRequest(getGeoContext()).mode(TravelMode.WALKING).origin(new com.google.maps.model.LatLng(0, 0)).destination(new com.google.maps.model.LatLng(34, 41)).departureTime(now).await();
-        }
-        catch (com.google.maps.errors.ApiException e) {}
-        catch (java.lang.InterruptedException e) {}
-        catch (java.io.IOException e) {}
+    private void startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
     }
 
     @Override
@@ -131,18 +142,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // startLocationUpdates();
     }
 
-    protected void setupLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    private void startLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
-    }
-
     //------------------------Directions-------------------------------------------------------
 
 
@@ -156,10 +155,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
     }
 
+    // Future: origin and destination can also be exact address strings - get then using Places API
+    private DirectionsResult getNewDirectionsResult(com.google.maps.model.LatLng origin, com.google.maps.model.LatLng destination) {
+        DateTime now = new DateTime();
+        try {
+            DirectionsResult results = DirectionsApi
+                    .newRequest(getGeoContext())
+                    .mode(TravelMode.WALKING)
+                    .origin(origin)
+                    .destination(destination)
+                    .departureTime(now)
+                    .await();
+            return results;
+        }
+        catch (com.google.maps.errors.ApiException e) {}
+        catch (java.lang.InterruptedException e) {}
+        catch (java.io.IOException e) {}
+        // Should probably do an actual something if an exception is caught
+
+        // This is a BAD SOLUTION! DO NOT TRY AT HOME!
+        return getNewDirectionsResult(origin, destination);
+    }
+
    //------------------------Map Long-Clicking to Select Destination---------------------------
 
-    private boolean pointSelectionIsLocked = false;
-    private Marker selectedPointMarker = null;
+
 
     @Override
     public void onMapLongClick(LatLng point) {
@@ -181,7 +201,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //------------------------User Functions------------------------------
 
 
-    Marker testMarker = null;
     // Call in onMapReady with functionOne(getCurrentFocus());
     // UPDATE CURRENT LOCATION MARKER
     public void functionOne(View view) {
