@@ -11,6 +11,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        System.out.println("MAPS KEY: " + getString(R.string.google_maps_key));
+        System.out.println("DIRECTIONS KEY: " + getString(R.string.directions_key));
     }
 
     /** Called when the user taps the Send button */
