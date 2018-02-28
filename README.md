@@ -12,7 +12,11 @@ The navigation app for the ForeSight project. For the embedded software used on 
 
 It was helpful when using the Java Client for Google Maps Services to clone [the repository](https://github.com/googlemaps/google-maps-services-java) and generate the javadoc for it.
 
-## Notes
+## TODO
+* Look into storing API Keys in environment variables [ideas link](https://github.com/mapbox/mapbox-gl-native/issues/713)
+* Replace potentially compromised API Keys with new ones, and deactivate the old ones
+* (If have time) work on improving user input (input address, locations API, autocomplete, screen-reading, etc.)
 
-If time runs short, this [Google-Directions-Android](https://github.com/jd-alexander/Google-Directions-Android) project's library could be used to simplify obtaining a route to display.
+## Notes
+* If time runs short, this [Google-Directions-Android](https://github.com/jd-alexander/Google-Directions-Android) project's library could be used to simplify obtaining a route to display.
 (It will have to be calculated what level of curvature of the polyline should be considered a 'turn'). 
