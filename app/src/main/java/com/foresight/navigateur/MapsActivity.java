@@ -110,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     // Set current location to previous location - do this before we update currentLocation
                     // TODO: Create a buffer-like ArrayList to store the past 10 or 20 locations - makes it easy to do running averages, etc.
+
                     if (currentLocation != null) {
                         previousLocation = currentLocation;
                         previousLatLng = currentLatLng;
@@ -120,9 +121,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = location;
                     currentLatLng = getLatLngFromLocation(location);
 
+                    updateCurrentBearing();
+
                     //System.out.println("BEARING BOI: " + location.getBearing());
                     Toast.makeText(getApplicationContext(),
-                            "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing: "null"),
+                            "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing : "null"),
                             Toast.LENGTH_SHORT).show();
 
                     zoomFirstTime();
