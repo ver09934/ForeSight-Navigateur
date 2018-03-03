@@ -54,9 +54,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location currentLocation = null; // Set to null to start
     LatLng currentLatLng = null; // Set to null to start
 
+    //Previous location
+    Location previousLocation = null;
+    LatLng previousLatLng = null;
+
+    // Bearing between previous and current location
+    Double currentBearing = null;
+
     // Desired Location
     private Marker selectedPointMarker = null;
     LatLng selectedLatLng = null;
+    Location testLocation = new L
 
     // For original zoom to location
     private boolean isFirstTime = true;
@@ -101,13 +109,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
+                    // Set current location to previous location - do this before we update currentLocation
+                    // TODO: Create a buffer-like ArrayList to store the past 10 or 20 locations - makes it easy to do running averages, etc.
+                    if (currentLocation != null) {
+                        previousLocation = currentLocation;
+                        previousLatLng = currentLatLng;
+                    }
+
                     // addMarkerAndZoomTo(location); // Update UI with location data
 
                     currentLocation = location;
-                    currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    currentLatLng = getLatLngFromLocation(location);
 
                     //System.out.println("BEARING BOI: " + location.getBearing());
-                    Toast.makeText(getApplicationContext(), "Bearing: " + location.getBearing(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing: "null"),
+                            Toast.LENGTH_SHORT).show();
 
                     zoomFirstTime();
 
@@ -147,6 +164,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         paused = false;
         // startLocationUpdates();
+    }
+
+    //-------------------Working with Routes and Coordinates, and Random Utils-----------------------------
+
+    private void updateCurrentBearing() {
+        if (currentLocation != null && previousLocation != null) {
+            currentBearing = (double) previousLocation.bearingTo(currentLocation);
+        }
+    }
+
+    private LatLng getLatLngFromLocation(Location inputLocation) {
+        return new LatLng(inputLocation.getLatitude(), inputLocation.getLongitude());
     }
 
     //------------------------Directions-------------------------------------------------------
@@ -274,23 +303,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //------------------------Camera Functions----------------------------
 
     private void zoomTo(Location inputLocation, float zoomLevel) {
-        Double lat = inputLocation.getLatitude();
-        Double lon = inputLocation.getLongitude();
-        LatLng myLatLng = new LatLng(lat, lon);
+        LatLng myLatLng = getLatLngFromLocation(inputLocation);
         CameraPosition currentLocationCameraPosition = new CameraPosition.Builder().target(myLatLng).zoom(zoomLevel).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentLocationCameraPosition));
     }
 
-    private Marker addMarkerFromLocation(Location inputLocation) {
-        Double lat = inputLocation.getLatitude();
-        Double lon = inputLocation.getLongitude();
-        LatLng myLatLng = new LatLng(lat, lon);
-        Marker markerOut = mMap.addMarker(new MarkerOptions().position(myLatLng).title(lat + ", " + lon)); // Label location with coordinates
+    private Marker addMarkerFromLocation(Location inputLocation, String label) {
+        LatLng myLatLng = getLatLngFromLocation(inputLocation);
+        Marker markerOut = mMap.addMarker(new MarkerOptions().position(myLatLng).title(label));
         return markerOut;
     }
 
+    // Label location with coordinates
+    private Marker addMarkerFromLoaction(Location inputLocation) {
+        return addMarkerFromLocation(inputLocation, inputLocation.getLatitude() + ", " + inputLocation.getLongitude());
+    }
+
+    private Marker addMarkerFromLatLng(LatLng inputLatLng, String label) {
+        return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(label));
+    }
+
+    // Label location with coordinates
     private Marker addMarkerFromLatLng(LatLng inputLatLng) {
-        return mMap.addMarker(new MarkerOptions().position(inputLatLng).title(inputLatLng.latitude + ", " + inputLatLng.longitude)); // Label location with coordinates
+        return addMarkerFromLatLng(inputLatLng, inputLatLng.latitude + ", " + inputLatLng.longitude);
     }
 
     public void zoomFirstTime() {
