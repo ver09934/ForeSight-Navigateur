@@ -64,7 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Desired Location
     private Marker selectedPointMarker = null;
     LatLng selectedLatLng = null;
-    Location testLocation = new L
 
     // For original zoom to location
     private boolean isFirstTime = true;
