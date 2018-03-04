@@ -172,7 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateCurrentBearing() {
         if (currentLocation != null && previousLocation != null) {
-            currentBearing = (double) previousLocation.bearingTo(currentLocation);
+            double bearing = (double) previousLocation.bearingTo(currentLocation);
+            currentBearing = (bearing >= 0) ? bearing : bearing +360;
         }
     }
 
