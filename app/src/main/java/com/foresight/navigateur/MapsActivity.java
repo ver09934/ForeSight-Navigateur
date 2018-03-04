@@ -123,21 +123,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     updateCurrentBearing();
 
-                    //System.out.println("BEARING BOI: " + location.getBearing());
-                    Toast.makeText(getApplicationContext(),
-                            "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing : "null"),
-                            Toast.LENGTH_SHORT).show();
-
-                    zoomFirstTime();
-
                     if (!paused) {
-                        // Toast.makeText(getApplicationContext(), "Current Coordinates:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
-                        // Toast.makeText(getApplicationContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing : "null"),
+                                Toast.LENGTH_SHORT).show();
                     }
 
+                    zoomFirstTime();
                 }
             }
         };
+
         startLocationUpdates(); //Must be called AFTER mLocationCallback is instantiated or it will throw a null pointer exception!
 
         mMap.setOnMapLongClickListener(this);
@@ -180,6 +176,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng getLatLngFromLocation(Location inputLocation) {
         return new LatLng(inputLocation.getLatitude(), inputLocation.getLongitude());
     }
+
+
 
     //------------------------Directions-------------------------------------------------------
 
