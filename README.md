@@ -5,18 +5,17 @@ The navigation app for the ForeSight project. For the embedded software used on 
 ## Build Requirements
 * Android SDK (Obviously)
 	* Need Google Play Services SDK Component (to allow use of the Google Location Services API) - more info about this can be found [here](https://developers.google.com/android/guides/setup)
-* Your own Maps API key (to be placed in app/src/debug/res/values/google_maps_api.xml)
-* Your own Directions API Key (to be placed in app/src/debug/res/values/google_maps_api.xml)
-	* You might be able to use the same key, but it wasn't working for me
-* Everything else should be covered by the build.gradle files
-
-It was helpful when using the Java Client for Google Maps Services to clone [the repository](https://github.com/googlemaps/google-maps-services-java) and generate the javadoc for it.
+	* Just install all the things it tells you to when IntelliJ/Anroid Studio yells at you
+* Your own Maps API key and Directions API key (to be placed in app/src/debug/res/values/google_maps_api.xml)
+	* You could also just use mine that I accidentally pushed to this repo (if this was a "real project", no, I wouldn't have done that)
+	* You might be able to use the same key for both, but it wasn't working for me
 
 ## TODO
 * Look into storing API Keys in environment variables [ideas link](https://github.com/mapbox/mapbox-gl-native/issues/713)
 * Replace potentially compromised API Keys with new ones, and deactivate the old ones
 * (If have time) work on improving user input (input address, locations API, autocomplete, screen-reading, etc.)
+* Think about calculating what level of curvature of the polyline should be considered a 'turn' 
+
 
 ## Notes
 * If time runs short, this [Google-Directions-Android](https://github.com/jd-alexander/Google-Directions-Android) project's library could be used to simplify obtaining a route to display.
-(It will have to be calculated what level of curvature of the polyline should be considered a 'turn'). 
