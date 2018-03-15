@@ -1,0 +1,20 @@
+# Algorithm Design Outline
+
+# High-Level Design
+
+if (within 10 meters of polyline)
+	direct user parallel to polyline
+else // greater than 10 meters from polyline
+	Direct user perpendicular to the polyline (get them back on the route)
+	// Options: guide user directly perpendicular, or guide them 30 degrees from the normal
+
+// Only call when (navigationIsActive)
+public double getDistanceToCurrentRoute() {
+	Location location2
+	//
+	return currentLocation.getDistance(Location2);
+}
+
+Additions:
+Anticipating a turn to alert the user:
+
