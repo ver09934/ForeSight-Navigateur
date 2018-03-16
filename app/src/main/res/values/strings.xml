@@ -1,6 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Navigateur</string>
     <string name="button_go_to_map">Go to Map</string>
+    <string name="button_bluetooth_test">Bluetooth Test</string>
     <string name="title_activity_maps">Map</string>
     <string name="function_one">Clear Selected Point</string>
     <string name="function_two">Get Route</string>
