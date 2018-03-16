@@ -20,4 +20,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
+
+    /** Called when the user taps the Bluetooth Test Activity Button */
+    public void openBluetoothTestActivity(View view) {
+        Intent intent = new Intent(this, BluetoothTestActivity.class);
+        startActivity(intent);
+    }
 }
