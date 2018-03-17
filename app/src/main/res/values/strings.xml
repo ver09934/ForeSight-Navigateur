@@ -18,5 +18,6 @@
     <!-- https://developer.android.com/guide/topics/resources/string-resource.html -->
     <string name="empty_text_view">(Empty Text View)</string>
     <string name="reserved_button">(Reserved Button)</string>
+    <string name="list_paired_devices">List Paired Devices</string>
 
 </resources>
