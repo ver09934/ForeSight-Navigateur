@@ -20,9 +20,10 @@ public class BluetoothTestActivity extends AppCompatActivity {
     public static final int REQUEST_ENABLE_BT = 1;
 
     public void setupBlueTooth() {
+
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(), "Your device does not support bluetooth" + , Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
         }
         else {
             if (!mBluetoothAdapter.isEnabled()) {
@@ -30,5 +31,10 @@ public class BluetoothTestActivity extends AppCompatActivity {
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
