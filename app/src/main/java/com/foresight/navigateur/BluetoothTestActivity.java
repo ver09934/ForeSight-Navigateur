@@ -31,12 +31,9 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
         mBluetoothTextView = (TextView) findViewById(R.id.bluetooth_text_view);
 
-        enableBluetooth();
-
     }
 
     public void enableBluetooth() {
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
@@ -50,12 +47,14 @@ public class BluetoothTestActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
-    //public void discoverDevices() {}
+    public void bluetoothFunctionOne(View view) {
+        enableBluetooth();
+    }
 
-    // Display known Devices
-    public void listPairedDevicesOnScreen(View view) {
+    public void bluetoothFunctionTwo(View view) {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         String displayText = "Paired Devices: \n";
 
@@ -69,19 +68,5 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
         mBluetoothTextView.setText(displayText);
     }
-
-    //public void listDiscoveredDevices() {}
-
-    /*
-    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-    if (pairedDevices.size() > 0) {
-        // There are paired devices. Get the name and address of each paired device.
-        for (BluetoothDevice device : pairedDevices) {
-            String deviceName = device.getName();
-            String deviceHardwareAddress = device.getAddress(); // MAC address
-        }
-    }
-    */
 
 }

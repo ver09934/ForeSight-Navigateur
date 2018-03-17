@@ -20,16 +20,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:onClick="listPairedDevicesOnScreen"
-                android:text="@string/list_paired_devices" />
+                android:onClick="bluetoothFunctionOne"
+                android:text="@string/bluetoothFunctionOne" />
 
             <Button
                 android:id="@+id/reserved_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:onClick="listPairedDevicesOnScreen"
-                android:text="@string/reserved_button" />
+                android:onClick="bluetoothFunctionTwo"
+                android:text="@string/bluetoothFunctionTwo" />
 
         </LinearLayout>
 
