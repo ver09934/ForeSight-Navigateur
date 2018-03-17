@@ -10,20 +10,20 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/function_1"
+            android:id="@+id/maps_function_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="functionOne"
-            android:text="@string/function_one" />
+            android:onClick="mapsFunctionOne"
+            android:text="@string/maps_function_one" />
 
         <Button
-            android:id="@+id/function_2"
+            android:id="@+id/maps_function_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="functionTwo"
-            android:text="@string/function_two" />
+            android:onClick="mapsFunctionTwo"
+            android:text="@string/maps_function_two" />
 
     </LinearLayout>
 
@@ -32,20 +32,20 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/function_3"
+            android:id="@+id/maps_function_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="functionThree"
-            android:text="@string/function_three" />
+            android:onClick="mapsFunctionThree"
+            android:text="@string/maps_function_three" />
 
         <Button
-            android:id="@+id/function_4"
+            android:id="@+id/maps_function_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:onClick="functionFour"
-            android:text="@string/function_four" />
+            android:onClick="mapsFunctionFour"
+            android:text="@string/maps_function_four" />
 
     </LinearLayout>
 

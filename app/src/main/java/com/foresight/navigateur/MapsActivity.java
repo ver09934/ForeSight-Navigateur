@@ -339,20 +339,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //------------------------User Functions------------------------------
 
     // Reset end point selection
-    public void functionOne(View view) {
+    public void mapsFunctionOne(View view) {
         resetPointSelection();
     }
 
     // Request directions
-    public void functionTwo(View view) {
+    public void mapsFunctionTwo(View view) {
         getNewDirectionsResult(currentLatLng, selectedLatLng);
     }
 
     // Cancel navigation
-    public void functionThree(View view) {
+    public void mapsFunctionThree(View view) {
         stopNavigation();
     }
 
-    public void functionFour(View view) {}
+    public void mapsFunctionFour(View view) {}
 
 }

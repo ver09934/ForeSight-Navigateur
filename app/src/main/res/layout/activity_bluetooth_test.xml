@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:onClick="bluetoothFunctionOne"
-                android:text="@string/bluetoothFunctionOne" />
+                android:text="@string/bluetooth_function_one" />
 
             <Button
                 android:id="@+id/reserved_button"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:onClick="bluetoothFunctionTwo"
-                android:text="@string/bluetoothFunctionTwo" />
+                android:text="@string/bluetooth_function_two" />
 
         </LinearLayout>
 

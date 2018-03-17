@@ -3,10 +3,10 @@
     <string name="button_go_to_map">Go to Map</string>
     <string name="button_bluetooth_test">Bluetooth Test</string>
     <string name="title_activity_maps">Map</string>
-    <string name="function_one">Clear Selected Point</string>
-    <string name="function_two">Get Route</string>
-    <string name="function_three">Stop Navigation</string>
-    <string name="function_four">Function 4</string>
+    <string name="maps_function_one">Clear Selected Point</string>
+    <string name="maps_function_two">Get Route</string>
+    <string name="maps_function_three">Stop Navigation</string>
+    <string name="maps_function_four">Function 4</string>
     <string name="map_instructions">Select location to travel to by long-clicking on map.</string>
     <string name="map_instructions_point_pressed">
         Selected location coordinates: <xliff:g id="sel_lat">%1$f</xliff:g>, <xliff:g id="sel_lon">%2$f</xliff:g>
@@ -18,7 +18,7 @@
     <!-- https://developer.android.com/guide/topics/resources/string-resource.html -->
     <string name="empty_text_view">(Empty Text View)</string>
     <string name="reserved_button">(Reserved Button)</string>
-    <string name="bluetoothFunctionOne">Check Bluetooth Status</string>
-    <string name="bluetoothFunctionTwo">List Paired Devices</string>
+    <string name="bluetooth_function_one">Check Bluetooth Status</string>
+    <string name="bluetooth_function_two">List Paired Devices</string>
 
 </resources>
