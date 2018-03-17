@@ -14,8 +14,11 @@ The navigation app for the ForeSight project. For the embedded software used on 
 * Look into storing API Keys in environment variables [ideas link](https://github.com/mapbox/mapbox-gl-native/issues/713)
 * Replace potentially compromised API Keys with new ones, and deactivate the old ones
 * (If have time) work on improving user input (input address, locations API, autocomplete, screen-reading, etc.)
-* Think about calculating what level of curvature of the polyline should be considered a 'turn' 
-
+* Think about calculating what level of curvature of the polyline should be considered a 'turn' (see algorithm.txt)
+* Bluetooth planning
+	* Handle pairing and connectivity through settings
+	* Use app to read and write from connection
+	* Will still need to determine which device to read/write to
 
 ## Notes
 * If time runs short, this [Google-Directions-Android](https://github.com/jd-alexander/Google-Directions-Android) project's library could be used to simplify obtaining a route to display.
