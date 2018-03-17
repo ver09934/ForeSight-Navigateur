@@ -16,7 +16,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/list_paired_devices_button"
+                android:id="@+id/bluetooth_function_one"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -24,12 +24,34 @@
                 android:text="@string/bluetooth_function_one" />
 
             <Button
-                android:id="@+id/reserved_button"
+                android:id="@+id/bluetooth_function_two"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:onClick="bluetoothFunctionTwo"
                 android:text="@string/bluetooth_function_two" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/bluetooth_function_three"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="bluetoothFunctionTwo"
+                android:text="@string/reserved_button" />
+
+            <Button
+                android:id="@+id/bluetooth_function_four"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="bluetoothFunctionTwo"
+                android:text="@string/reserved_button" />
 
         </LinearLayout>
 
