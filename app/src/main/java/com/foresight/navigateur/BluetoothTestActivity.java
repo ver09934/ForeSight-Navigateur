@@ -13,15 +13,16 @@ public class BluetoothTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_test);
 
-        setupBlueTooth();
+        enableBluetooth();
 
     }
 
     public static final int REQUEST_ENABLE_BT = 1;
+    public BluetoothAdapter mBluetoothAdapter;
 
-    public void setupBlueTooth() {
+    public void enableBluetooth() {
 
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
         }
@@ -30,11 +31,12 @@ public class BluetoothTestActivity extends AppCompatActivity {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
+            else {
+                Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+    //public void discoverDevices() {}
+
 }
