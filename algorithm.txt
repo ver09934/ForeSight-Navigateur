@@ -18,3 +18,5 @@ public double getDistanceToCurrentRoute() {
 Additions:
 Anticipating a turn to alert the user:
 
+if the next waypoint is a turn waypoint, then alert the user of a turn
+a waypoint is a turn waypoint if the smaller of the two angles formed by it, the previous, and the next waypoint is less than a set value, such as 120 degrees or 90 degrees
