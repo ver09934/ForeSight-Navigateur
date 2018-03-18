@@ -3,6 +3,7 @@ package com.foresight.navigateur;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,14 +11,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Set;
-
-/*
-Bluetooth setup and testing class.
-Contains a lot of code borrowed from the android developer guides,
-with a link available here:
-https://developer.android.com/guide/topics/connectivity/bluetooth.html
-*/
+import java.util.UUID;
 
 public class BluetoothTestActivity extends AppCompatActivity {
 
@@ -25,16 +22,32 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private TextView mBluetoothTextView;
 
+    private final String DEVICE_ADDRESS="00:14:03:05:FF:E6";
+    private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");//Serial Port Service ID
+
+    private BluetoothDevice device;
+    private BluetoothSocket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+
+    boolean deviceConnected=false;
+    Thread thread;
+    byte buffer[];
+    int bufferPosition;
+    boolean stopThread;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_test);
 
         mBluetoothTextView = (TextView) findViewById(R.id.bluetooth_text_view);
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
+
+    //-------------------------------Bluetooth Setup-------------------------------------
 
     public void enableBluetooth() {
         if (mBluetoothAdapter == null) {
@@ -60,8 +73,12 @@ public class BluetoothTestActivity extends AppCompatActivity {
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
+
+
                     displayText += "Name: " + device.getName() + " ";
                     displayText += "Mac address: " + device.getAddress() + "\n"; // MAC address
+
+
                 }
             }
 
@@ -69,9 +86,12 @@ public class BluetoothTestActivity extends AppCompatActivity {
         }
     }
 
-    public void testMethod() {
+    //---------------------Other Stuff--------------------------------
 
-    }
+
+
+
+    //-------------------Button Methods-------------------------------
 
     public void bluetoothFunctionOne(View view) {
         enableBluetooth();
@@ -81,8 +101,6 @@ public class BluetoothTestActivity extends AppCompatActivity {
         listDevicesToTextView();
     }
 
-    public void bluetoothFunctionThree(View view) {
-        testMethod();
-    }
+    public void bluetoothFunctionThree(View view) {}
 
 }
