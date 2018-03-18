@@ -3,7 +3,6 @@ package com.foresight.navigateur;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,18 +10,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Set;
-import java.util.UUID;
+
+/*
+To check if bluetooth is on and we have previously paired with the correct MAC address
+ */
 
 public class BluetoothTestActivity extends AppCompatActivity {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter mBluetoothAdapter;
     private TextView mBluetoothTextView;
-
-    private BluetoothDevice bluetoothDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +55,6 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
     public void findPairedDevices() {
 
-        boolean found = false;
-
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isEnabled()) {
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -69,10 +65,6 @@ public class BluetoothTestActivity extends AppCompatActivity {
                     for (BluetoothDevice device : pairedDevices) {
 
                         if (device.getAddress().equals(DataHolder.DEVICE_ADDRESS)) {
-
-                            bluetoothDevice = device;
-                            DataHolder.setData(device);
-                            found = true;
 
                             displayText += device.getName() + ", " + device.getAddress() + "(Selected Device)\n";
 
@@ -86,10 +78,13 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
                 mBluetoothTextView.setText(displayText);
 
+                /*
                 if (found)
                     Toast.makeText(getApplicationContext(), "HC-06 found", Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(getApplicationContext(), "Please pair with HC-06 " + DataHolder.DEVICE_ADDRESS, Toast.LENGTH_SHORT).show();
+                    */
+
             }
         }
     }
@@ -103,10 +98,5 @@ public class BluetoothTestActivity extends AppCompatActivity {
     public void bluetoothFunctionTwo(View view) {
         findPairedDevices();
     }
-
-    public void bluetoothFunctionThree(View view) {}
-
-    public void bluetoothFunctionFour(View view) {}
-
 
 }
