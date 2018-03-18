@@ -20,5 +20,6 @@
     <string name="reserved_button">(Reserved Button)</string>
     <string name="bluetooth_function_one">Check Bluetooth Status</string>
     <string name="bluetooth_function_two">List Paired Devices</string>
+    <string name="bluetooth_function_three">Placeholder Text</string>
 
 </resources>

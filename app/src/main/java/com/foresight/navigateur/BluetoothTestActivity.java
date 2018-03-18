@@ -69,4 +69,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
         mBluetoothTextView.setText(displayText);
     }
 
+    public void bluetoothFunctionThree(View view) {
+
+    }
+
 }
