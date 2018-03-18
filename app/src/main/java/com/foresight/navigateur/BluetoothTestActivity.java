@@ -52,18 +52,20 @@ public class BluetoothTestActivity extends AppCompatActivity {
     }
 
     public void listDevicesToTextView() {
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        String displayText = "Paired Devices: \n";
+        if (mBluetoothAdapter != null) {
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            String displayText = "Paired Devices: \n";
 
-        if (pairedDevices.size() > 0) {
-            // There are paired devices. Get the name and address of each paired device.
-            for (BluetoothDevice device : pairedDevices) {
-                displayText += "Name: " + device.getName() + " ";
-                displayText += "Mac address: " + device.getAddress() + "\n"; // MAC address
+            if (pairedDevices.size() > 0) {
+                // There are paired devices. Get the name and address of each paired device.
+                for (BluetoothDevice device : pairedDevices) {
+                    displayText += "Name: " + device.getName() + " ";
+                    displayText += "Mac address: " + device.getAddress() + "\n"; // MAC address
+                }
             }
-        }
 
-        mBluetoothTextView.setText(displayText);
+            mBluetoothTextView.setText(displayText);
+        }
     }
 
     public void bluetoothFunctionOne(View view) {
