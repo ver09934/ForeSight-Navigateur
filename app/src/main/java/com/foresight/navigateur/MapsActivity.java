@@ -1,8 +1,11 @@
 package com.foresight.navigateur;
 
 import android.Manifest;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -33,10 +36,54 @@ import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/*
+Welcome to the land of spaghetti code...
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        //------------Maps-------------------------------
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mMapInstructionsView = findViewById(R.id.map_instructions_text);
+
+        //----------Bluetooth------------------------------
+
+        masterBluetoothMethod();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopThread = true;
+        try {
+            outputStream.close();
+            inputStream.close();
+            socket.close();
+        }
+        catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //=====================================MAPS============================================================
 
     // General
     private GoogleMap mMap;
@@ -70,19 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private boolean navigationIsActive = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        mMapInstructionsView = findViewById(R.id.map_instructions_text);
-    }
 
     /**
      * Manipulates the map once available.
@@ -353,6 +388,129 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         stopNavigation();
     }
 
-    public void mapsFunctionFour(View view) {}
+    public void mapsFunctionFour(View view) {
+        testSend();
+    }
+
+    //================================================BLUETOOTH=====================================================
+
+    //-----for maps-----
+    //These are NOT SYNCHRONIZED with current and previous location...
+    private double previousMagneticCompassHeading = 0;
+    private double currentMagneticCompassHeading = 0;
+
+    private BluetoothDevice bluetoothDevice;
+
+    private boolean haveBluetoothDevice = false;
+    private boolean haveDeviceStreams = false;
+
+    private BluetoothSocket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+
+    Thread thread;
+    byte buffer[];
+    int bufferPosition;
+    boolean stopThread;
+
+    public void masterBluetoothMethod() {
+        if (DataHolder.containsData()) {
+            bluetoothDevice = DataHolder.getData();
+            haveBluetoothDevice = true;
+            Toast.makeText(getApplicationContext(), "BluetoothDevice obtained", Toast.LENGTH_SHORT).show();
+
+            makeConnection();
+
+            if (haveDeviceStreams)
+                beginListenForData();
+
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "BluetoothDevice NOT obtained", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void makeConnection() {
+        if (haveBluetoothDevice) {
+
+            boolean connected = true;
+            boolean haveStreams = true;
+
+            try {
+                socket = bluetoothDevice.createRfcommSocketToServiceRecord(DataHolder.PORT_UUID);
+                socket.connect();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                connected = false;
+                haveStreams = false; //IMPORTANT TO HAVE THIS HERE
+            }
+
+            if (connected) {
+                try {
+                    outputStream = socket.getOutputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    haveStreams = false;
+                }
+                try {
+                    inputStream = socket.getInputStream();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    haveStreams = false;
+                }
+            }
+
+            haveDeviceStreams = haveStreams;
+
+        }
+    }
+
+    void beginListenForData()
+    {
+        final Handler handler = new Handler();
+        stopThread = false;
+        buffer = new byte[1024];
+        Thread thread  = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopThread)
+                {
+                    try
+                    {
+                        int byteCount = inputStream.available();
+                        if(byteCount > 0)
+                        {
+                            byte[] rawBytes = new byte[byteCount];
+                            inputStream.read(rawBytes);
+                            final String string=new String(rawBytes,"UTF-8");
+                            handler.post(new Runnable() {
+                                public void run()
+                                {
+                                    updateMagneticCompassHeadings(string);
+                                }
+                            });
+
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopThread = true;
+                    }
+                }
+            }
+        });
+
+        thread.start();
+    }
+
+    // Check input --> this could bork
+    public void updateMagneticCompassHeadings(String inputString) {
+        previousMagneticCompassHeading = currentMagneticCompassHeading;
+        currentMagneticCompassHeading = Integer.parseInt(inputString);
+    }
+
+    public void testSend() {}
 
 }

@@ -22,20 +22,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private TextView mBluetoothTextView;
 
-    private final String DEVICE_ADDRESS="00:14:03:05:FF:E6";
-    private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");//Serial Port Service ID
-
     private BluetoothDevice bluetoothDevice;
-    private BluetoothSocket socket;
-    private OutputStream outputStream;
-    private InputStream inputStream;
-
-    boolean deviceConnected = false;
-    Thread thread;
-    byte buffer[];
-    int bufferPosition;
-    boolean stopThread;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +40,13 @@ public class BluetoothTestActivity extends AppCompatActivity {
     public void setupBluetooth() {
 
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_SHORT).show();
         } else {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             } else {
-                Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -74,6 +61,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
     public void findPairedDevices() {
 
+        boolean found = false;
+
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isEnabled()) {
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -83,31 +72,31 @@ public class BluetoothTestActivity extends AppCompatActivity {
                     // There are paired devices. Get the name and address of each paired device.
                     for (BluetoothDevice device : pairedDevices) {
 
-                        if (device.getAddress().equals(DEVICE_ADDRESS)) {
+                        if (device.getAddress().equals(DataHolder.DEVICE_ADDRESS)) {
 
                             bluetoothDevice = device;
                             DataHolder.setData(device);
+                            found = true;
 
-                            displayText += device.getName() + ", " + device.getAddress() + " <-- (Selected Device)\n";
-                        } else {
+                            displayText += device.getName() + ", " + device.getAddress() + "(Selected Device)\n";
 
+                        }
+                        else {
                             displayText += device.getName() + ", " + device.getAddress() + "\n"; // MAC address
-
                         }
 
                     }
                 }
 
                 mBluetoothTextView.setText(displayText);
+
+                if (found)
+                    Toast.makeText(getApplicationContext(), "HC-06 found", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Please pair with HC-06 " + DataHolder.DEVICE_ADDRESS, Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-
-    //---------------------Other Stuff--------------------------------
-
-
-
 
     //-------------------Button Methods-------------------------------
 
