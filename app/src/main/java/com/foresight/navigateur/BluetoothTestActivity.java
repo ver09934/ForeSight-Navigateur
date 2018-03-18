@@ -66,7 +66,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                     // There are paired devices. Get the name and address of each paired device.
                     for (BluetoothDevice device : pairedDevices) {
 
-                        if (device.getAddress().equals(DataHolder.DEVICE_ADDRESS)) {
+                        if (device.getAddress().equals(MapsActivity.DEVICE_ADDRESS)) {
 
                             displayText += device.getName() + spacing + device.getAddress() + spacing + "(Selected Device)\n";
 
@@ -84,7 +84,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                 if (found)
                     Toast.makeText(getApplicationContext(), "HC-06 found", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(), "Please pair with HC-06 " + DataHolder.DEVICE_ADDRESS, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please pair with HC-06 " + MapsActivity.DEVICE_ADDRESS, Toast.LENGTH_SHORT).show();
                     */
 
             }
