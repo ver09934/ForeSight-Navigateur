@@ -5,7 +5,7 @@ The navigation app for the ForeSight project. For the embedded software used on 
 ## Build Requirements
 * Android SDK (Obviously)
 	* Need Google Play Services SDK Component (to allow use of the Google Location Services API) - more info about this can be found [here](https://developers.google.com/android/guides/setup)
-	* Just install all the things it tells you to when IntelliJ/Anroid Studio yells at you
+	* Just install all the things it tells you to when IntelliJ/Android Studio yells at you
 * Your own Maps API key and Directions API key (to be placed in app/src/debug/res/values/google_maps_api.xml)
 	* You could also just use mine that I accidentally pushed to this repo (if this was a "real project", no, I wouldn't have done that)
 	* You might be able to use the same key for both, but it wasn't working for me
