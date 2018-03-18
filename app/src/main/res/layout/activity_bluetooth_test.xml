@@ -43,15 +43,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:onClick="bluetoothFunctionThree"
-                android:text="@string/bluetooth_function_three" />
+                android:text="@string/reserved_button" />
 
             <Button
                 android:id="@+id/bluetooth_function_four"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:onClick="bluetoothFunctionFour"
                 android:text="@string/reserved_button" />
-                <!-- android:onClick="bluetoothFunctionTwo" -->
 
         </LinearLayout>
 

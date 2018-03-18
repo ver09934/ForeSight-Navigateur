@@ -18,8 +18,6 @@
     <!-- https://developer.android.com/guide/topics/resources/string-resource.html -->
     <string name="empty_text_view">(Empty Text View)</string>
     <string name="reserved_button">(Reserved Button)</string>
-    <string name="bluetooth_function_one">Check Bluetooth Status</string>
-    <string name="bluetooth_function_two">List Paired Devices</string>
-    <string name="bluetooth_function_three">Placeholder Text</string>
-
+    <string name="bluetooth_function_one">Enable Bluetooth</string>
+    <string name="bluetooth_function_two">Find HC-06</string>
 </resources>

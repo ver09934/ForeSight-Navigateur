@@ -25,12 +25,12 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private final String DEVICE_ADDRESS="00:14:03:05:FF:E6";
     private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");//Serial Port Service ID
 
-    private BluetoothDevice device;
+    private BluetoothDevice bluetoothDevice;
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private InputStream inputStream;
 
-    boolean deviceConnected=false;
+    boolean deviceConnected = false;
     Thread thread;
     byte buffer[];
     int bufferPosition;
@@ -43,48 +43,66 @@ public class BluetoothTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bluetooth_test);
 
         mBluetoothTextView = (TextView) findViewById(R.id.bluetooth_text_view);
+
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
 
-    //-------------------------------Bluetooth Setup-------------------------------------
+    //------------------------Enabling Bluetooth-----------------------
 
-    public void enableBluetooth() {
+    public void setupBluetooth() {
+
         if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_LONG).show();
             }
         }
 
-    }
-
-    public void listDevicesToTextView() {
-        if (mBluetoothAdapter != null) {
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            String displayText = "Paired Devices: \n";
-
-            if (pairedDevices.size() > 0) {
-                // There are paired devices. Get the name and address of each paired device.
-                for (BluetoothDevice device : pairedDevices) {
-
-
-                    displayText += "Name: " + device.getName() + " ";
-                    displayText += "Mac address: " + device.getAddress() + "\n"; // MAC address
-
-
-                }
-            }
-
-            mBluetoothTextView.setText(displayText);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
+
+    //--------------------Finding and Storing Bluetooth Device--------------------------
+
+    public void findPairedDevices() {
+
+        if (mBluetoothAdapter != null) {
+            if (mBluetoothAdapter.isEnabled()) {
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                String displayText = "Paired Devices: \n";
+
+                if (pairedDevices.size() > 0) {
+                    // There are paired devices. Get the name and address of each paired device.
+                    for (BluetoothDevice device : pairedDevices) {
+
+                        if (device.getAddress().equals(DEVICE_ADDRESS)) {
+
+                            bluetoothDevice = device;
+                            DataHolder.setData(device);
+
+                            displayText += device.getName() + ", " + device.getAddress() + " <-- (Selected Device)\n";
+                        } else {
+
+                            displayText += device.getName() + ", " + device.getAddress() + "\n"; // MAC address
+
+                        }
+
+                    }
+                }
+
+                mBluetoothTextView.setText(displayText);
+            }
+        }
+    }
+
 
     //---------------------Other Stuff--------------------------------
 
@@ -94,13 +112,16 @@ public class BluetoothTestActivity extends AppCompatActivity {
     //-------------------Button Methods-------------------------------
 
     public void bluetoothFunctionOne(View view) {
-        enableBluetooth();
+        setupBluetooth();
     }
 
     public void bluetoothFunctionTwo(View view) {
-        listDevicesToTextView();
+        findPairedDevices();
     }
 
     public void bluetoothFunctionThree(View view) {}
+
+    public void bluetoothFunctionFour(View view) {}
+
 
 }
