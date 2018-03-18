@@ -18,7 +18,7 @@
     <!-- https://stackoverflow.com/questions/3693079/problem-with-system-out-printf-command-in-java -->
     <!-- https://docs.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax THIS IS THE GOOD ONE-->
     <!-- https://developer.android.com/guide/topics/resources/string-resource.html -->
-    <string name="bluetooth_info_default">(Bluetooth Status Info)</string>
+    <string name="bluetooth_info_default">(Bluetooth Status Info) - Please pair with and connect to the HC-06</string>
     <string name="empty_text_view">(Empty Text View)</string>
     <string name="reserved_button">(Reserved Button)</string>
     <string name="bluetooth_function_one">Enable Bluetooth</string>
