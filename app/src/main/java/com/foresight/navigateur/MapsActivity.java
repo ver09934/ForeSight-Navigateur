@@ -76,6 +76,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (java.io.IOException e) {
             e.printStackTrace();
         }
+        catch (java.lang.NullPointerException e) {
+            e.printStackTrace();
+        }
+        catch (java.lang.RuntimeException e) {
+            e.printStackTrace();
+        }
 
         deviceConnected = false;
     }

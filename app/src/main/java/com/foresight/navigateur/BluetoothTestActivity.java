@@ -55,6 +55,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
     public void findPairedDevices() {
 
+        String spacing = "   ";
+
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isEnabled()) {
                 Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
@@ -66,11 +68,11 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
                         if (device.getAddress().equals(DataHolder.DEVICE_ADDRESS)) {
 
-                            displayText += device.getName() + ", " + device.getAddress() + "(Selected Device)\n";
+                            displayText += device.getName() + spacing + device.getAddress() + spacing + "(Selected Device)\n";
 
                         }
                         else {
-                            displayText += device.getName() + ", " + device.getAddress() + "\n"; // MAC address
+                            displayText += device.getName() + spacing + device.getAddress() + "\n"; // MAC address
                         }
 
                     }
