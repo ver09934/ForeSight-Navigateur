@@ -31,10 +31,11 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
         mBluetoothTextView = (TextView) findViewById(R.id.bluetooth_text_view);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
     }
 
     public void enableBluetooth() {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Your device does not support bluetooth", Toast.LENGTH_LONG).show();
         }
@@ -50,11 +51,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
     }
 
-    public void bluetoothFunctionOne(View view) {
-        enableBluetooth();
-    }
-
-    public void bluetoothFunctionTwo(View view) {
+    public void listDevicesToTextView() {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         String displayText = "Paired Devices: \n";
 
@@ -67,6 +64,14 @@ public class BluetoothTestActivity extends AppCompatActivity {
         }
 
         mBluetoothTextView.setText(displayText);
+    }
+
+    public void bluetoothFunctionOne(View view) {
+        enableBluetooth();
+    }
+
+    public void bluetoothFunctionTwo(View view) {
+        listDevicesToTextView();
     }
 
     public void bluetoothFunctionThree(View view) {
