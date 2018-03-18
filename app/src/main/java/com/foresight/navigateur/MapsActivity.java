@@ -1,8 +1,10 @@
 package com.foresight.navigateur;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
@@ -40,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -53,19 +57,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        //------------Maps-------------------------------
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        masterMapMethod();
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        mMapInstructionsView = findViewById(R.id.map_instructions_text);
-
-        //----------Bluetooth------------------------------
-
-        masterBluetoothMethod();
+        //masterBluetoothMethod();
     }
 
     @Override
@@ -73,6 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onDestroy();
 
         stopThread = true;
+
         try {
             outputStream.close();
             inputStream.close();
@@ -81,9 +76,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (java.io.IOException e) {
             e.printStackTrace();
         }
+
+        deviceConnected = false;
     }
 
-    //=====================================MAPS============================================================
+    //=====================================================================================================
+    //==================================== MAPS ===========================================================
+    //=====================================================================================================
 
     // General
     private GoogleMap mMap;
@@ -117,14 +116,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private boolean navigationIsActive = false;
 
+    public void masterMapMethod() {
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mMapInstructionsView = findViewById(R.id.map_instructions_text);
+    }
 
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
      * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
+     * If Google Play services is not installed on the mBluetoothDevice, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
@@ -389,15 +397,183 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapsFunctionFour(View view) {
+        masterBluetoothMethod();
+    }
+
+    public void mapsFunctionFive(View view) {
         testSend();
     }
 
-    //================================================BLUETOOTH=====================================================
+    public void mapsFunctionSix(View view) {
 
-    //-----for maps-----
-    //These are NOT SYNCHRONIZED with current and previous location...
+    }
+
+
+    //==============================================================================================================
+    //=============================================== BLUETOOTH ====================================================
+    //==============================================================================================================
+
+    /*
+    TextView: use .setText(String) and .append(String)
+     */
+
     private double previousMagneticCompassHeading = 0;
     private double currentMagneticCompassHeading = 0;
+
+    // Check input --> this could bork
+    public void updateMagneticCompassHeadings(String inputString) {
+        previousMagneticCompassHeading = currentMagneticCompassHeading;
+        currentMagneticCompassHeading = Integer.parseInt(inputString);
+    }
+
+    //----------------
+
+    //MASTER BLUETOOTH METHOD
+    public void masterBluetoothMethod() {
+        if(BTinit()) {
+            if(BTconnect()) {
+                deviceConnected = true;
+                beginListenForData();
+                mMapInstructionsView.append("\nConnection Opened!\n");
+            }
+        }
+    }
+
+    public void testSend() {
+        sendData("b");
+    }
+
+    public void sendData(String inputString) {
+        if (deviceConnected) {
+            inputString.concat("\n");
+            try {
+                outputStream.write(inputString.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //--------------
+
+    public static final String DEVICE_ADDRESS="00:14:03:05:FF:E6";
+    public static final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); //Serial Port Service ID
+
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 1;
+
+    private BluetoothDevice mBluetoothDevice;
+    private BluetoothSocket socket;
+    private OutputStream outputStream;
+    private InputStream inputStream;
+
+    boolean deviceConnected = false;
+    Thread thread;
+    byte buffer[];
+    int bufferPosition;
+    boolean stopThread;
+
+    public boolean BTinit() {
+
+        boolean found = false;
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getApplicationContext(), "Device does not support bluetooth", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_SHORT).show();
+            }
+
+            Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
+            if (bondedDevices.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Please Pair the Device first", Toast.LENGTH_SHORT).show();
+            } else {
+                for (BluetoothDevice device : bondedDevices) {
+                    if (device.getAddress().equals(DEVICE_ADDRESS)) {
+                        mBluetoothDevice = device;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return found;
+    }
+
+    public boolean BTconnect() {
+
+        boolean connected = true;
+
+        try {
+            socket = mBluetoothDevice.createRfcommSocketToServiceRecord(PORT_UUID);
+            socket.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+            connected = false;
+        }
+
+        if (connected) {
+            try {
+                outputStream=socket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                inputStream=socket.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return connected;
+    }
+
+    void beginListenForData() {
+        final Handler handler = new Handler();
+        stopThread = false;
+        buffer = new byte[1024];
+        Thread thread  = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                while(!Thread.currentThread().isInterrupted() && !stopThread)
+                {
+                    try
+                    {
+                        int byteCount = inputStream.available();
+                        if(byteCount > 0)
+                        {
+                            byte[] rawBytes = new byte[byteCount];
+                            inputStream.read(rawBytes);
+                            final String string=new String(rawBytes,"UTF-8");
+                            handler.post(new Runnable() {
+                                public void run()
+                                {
+                                    updateMagneticCompassHeadings(string);
+                                }
+                            });
+
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        stopThread = true;
+                    }
+                }
+            }
+        });
+
+        thread.start();
+    }
+
+    /*
 
     private BluetoothDevice bluetoothDevice;
 
@@ -505,12 +681,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         thread.start();
     }
 
-    // Check input --> this could bork
-    public void updateMagneticCompassHeadings(String inputString) {
-        previousMagneticCompassHeading = currentMagneticCompassHeading;
-        currentMagneticCompassHeading = Integer.parseInt(inputString);
-    }
-
     public void testSend() {}
+
+    */
 
 }

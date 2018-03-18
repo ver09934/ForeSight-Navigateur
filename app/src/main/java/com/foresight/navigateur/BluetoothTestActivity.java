@@ -50,11 +50,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
             }
         }
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
     //--------------------Finding and Storing Bluetooth Device--------------------------

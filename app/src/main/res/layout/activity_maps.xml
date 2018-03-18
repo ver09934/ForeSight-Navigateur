@@ -49,6 +49,28 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/maps_function_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="mapsFunctionFive"
+            android:text="@string/maps_function_five" />
+
+        <Button
+            android:id="@+id/maps_function_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="mapsFunctionSix"
+            android:text="@string/maps_function_six" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/map_instructions_text"
         android:text="@string/map_instructions"
