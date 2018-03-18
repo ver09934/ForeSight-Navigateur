@@ -57,6 +57,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        mMapInstructionsView = findViewById(R.id.map_instructions_text);
+        bluetoothTextView = findViewById(R.id.bluetooth_status_info);
+
         masterMapMethod();
 
         //masterBluetoothMethod();
@@ -97,6 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Assorted
     boolean paused = false;
     private TextView mMapInstructionsView;
+    private TextView bluetoothTextView;
 
     // Using play services location
     private LocationRequest mLocationRequest;
@@ -129,8 +133,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        mMapInstructionsView = findViewById(R.id.map_instructions_text);
     }
 
     /**
@@ -436,13 +438,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //MASTER BLUETOOTH METHOD
     public void masterBluetoothMethod() {
+
         if(BTinit()) {
             if(BTconnect()) {
                 deviceConnected = true;
                 beginListenForData();
-                mMapInstructionsView.append("\nConnection Opened!\n");
+
+                mMapInstructionsView.append("\n" + getString(R.string.bluetooth_listening));
             }
         }
+
     }
 
     public void testSend() {
@@ -457,6 +462,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            bluetoothTextView.setText(getString(R.string.bluetooth_sent_text, inputString));
         }
     }
 
@@ -485,19 +492,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
-            Toast.makeText(getApplicationContext(), "Device does not support bluetooth", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Device does not support bluetooth", Toast.LENGTH_SHORT).show();
+            bluetoothTextView.setText(getString(R.string.bluetooth_not_supported));
         }
         else {
             if (!mBluetoothAdapter.isEnabled()) {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             } else {
-                Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Bluetooth supported and already enabled", Toast.LENGTH_SHORT).show();
+                bluetoothTextView.setText(getString(R.string.bluetooth_enabled));
             }
 
             Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
             if (bondedDevices.isEmpty()) {
-                Toast.makeText(getApplicationContext(), "Please Pair the Device first", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Please Pair the Device first", Toast.LENGTH_SHORT).show();
+                bluetoothTextView.setText(getString(R.string.bluetooth_please_pair));
             } else {
                 for (BluetoothDevice device : bondedDevices) {
                     if (device.getAddress().equals(DEVICE_ADDRESS)) {
@@ -536,6 +546,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
 
+        }
+
+        if (connected) {
+            bluetoothTextView.append("\n" + getString(R.string.bluetooth_connection_established));
+        }
+        else {
+            bluetoothTextView.append("\n" + getString(R.string.bluetooth_connection_failed));
         }
 
         return connected;

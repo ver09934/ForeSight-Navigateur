@@ -23,4 +23,13 @@
     <string name="reserved_button">(Reserved Button)</string>
     <string name="bluetooth_function_one">Enable Bluetooth</string>
     <string name="bluetooth_function_two">Find HC-06</string>
+    <!-- Bluetooth Alerts -->
+    <string name="bluetooth_not_supported">Device does not support bluetooth</string>
+    <string name="bluetooth_enabled">Bluetooth supported and already enabled</string>
+    <string name="bluetooth_please_pair">Please Pair the Device first</string>
+    <string name="bluetooth_connection_established">Connection established to HC-06</string>
+    <string name="bluetooth_connection_failed">Connection to HC-06 failed</string>
+    <string name="bluetooth_listening">Listening for data, &#8230;</string> <!-- Listening for data... -->
+    <string name="bluetooth_sent_text">Sent data: %1$s</string>
+
 </resources>
