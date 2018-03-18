@@ -2,6 +2,7 @@ package com.foresight.navigateur;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,6 +69,10 @@ public class BluetoothTestActivity extends AppCompatActivity {
         }
     }
 
+    public void testMethod() {
+
+    }
+
     public void bluetoothFunctionOne(View view) {
         enableBluetooth();
     }
@@ -77,7 +82,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     }
 
     public void bluetoothFunctionThree(View view) {
-
+        testMethod();
     }
 
 }
