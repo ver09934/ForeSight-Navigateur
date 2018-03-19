@@ -447,7 +447,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 deviceConnected = true;
                 beginListenForData();
 
-                mMapInstructionsView.append("\n" + getString(R.string.bluetooth_listening));
+                mMapInstructionsView.append(getString(R.string.bluetooth_listening));
             }
         }
 
