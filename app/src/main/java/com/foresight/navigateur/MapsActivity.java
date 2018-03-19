@@ -124,7 +124,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // For original zoom to location
     private boolean isFirstTime = true;
 
+    // Navigation and route
     private boolean navigationIsActive = false;
+    // TODO: private List<LatLng> routePoints = null;
 
     public void masterMapMethod() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -306,6 +308,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addPolyline(DirectionsResult results) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+        // TODO: routePoints = decodedPath; //Make set of route points accessible by other methods
     }
 
     public void stopNavigation() {
