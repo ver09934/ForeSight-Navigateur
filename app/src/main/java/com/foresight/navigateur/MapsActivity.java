@@ -510,11 +510,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
             if (bondedDevices.isEmpty()) {
                 //Toast.makeText(getApplicationContext(), "Please Pair the Device first", Toast.LENGTH_SHORT).show();
-                bluetoothTextView.setText(getString(R.string.bluetooth_please_pair));
+                bluetoothTextView.append(getString(R.string.bluetooth_please_pair));
             } else {
                 for (BluetoothDevice device : bondedDevices) {
                     if (device.getAddress().equals(DEVICE_ADDRESS)) {
                         mBluetoothDevice = device;
+                        bluetoothTextView.append(getString(R.string.bluetooth_device_located));
                         found = true;
                         break;
                     }
@@ -534,6 +535,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
             connected = false;
+            bluetoothTextView.append("Failed to create socket...");
         }
 
         if (connected) {
