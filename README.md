@@ -11,7 +11,7 @@ First, you must create the gitignored file ```app/src/debug/res/values/google_ma
 </resources>
 
   ```
-  Then, replace ```YOUR_MAPS_API_KEY``` and ```YOUR_DIRECTIONS_API_KEY``` with your actual keys obtained from [https://console.developers.google.com/](https://console.developers.google.com/).
+  Then, replace ```YOUR_MAPS_API_KEY``` and ```YOUR_DIRECTIONS_API_KEY``` with your actual keys obtained from [https://console.developers.google.com/](https://console.developers.google.com/). Remember to enable the correct API components for each key, and to set the proper key restrictions.
 
 ## Building
 * Android SDK (Obviously)
