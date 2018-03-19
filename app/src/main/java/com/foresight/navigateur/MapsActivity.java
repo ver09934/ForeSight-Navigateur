@@ -565,9 +565,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else {
             bluetoothTextView.append("\n" + getString(R.string.bluetooth_connection_failed));
         }
+        */
 
         return connected;
-        */
+
     }
 
     void beginListenForData() {
