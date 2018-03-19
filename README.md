@@ -1,22 +1,28 @@
 # ForeSight Navigateur
 
-The navigation app for the ForeSight project. For the embedded software used on the anklet, [click here](https://example.com).
+The navigation app for the ForeSight project. For the embedded software used on the anklet, see [here](https://example.com).
 
-## Build Requirements
+## Setup
+First, you must create the gitignored file ```app/src/debug/res/values/google_maps_api.xml```, which is ignored in ```/app/.gitignore```. After you do this, copy the following text into it:
+ ```xml
+ <resources>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">YOUR_MAPS_API_KEY</string>
+    <string name="directions_key" templateMergeStrategy="preserve" translatable="false">YOUR_DIRECTIONS_API_KEY</string>
+</resources>
+
+  ```
+  Then, replace ```YOUR_MAPS_API_KEY``` and ```YOUR_DIRECTIONS_API_KEY``` with your actual keys obtained from [https://console.developers.google.com/](https://console.developers.google.com/).
+
+## Building
 * Android SDK (Obviously)
 	* Need Google Play Services SDK Component (to allow use of the Google Location Services API) - more info about this can be found [here](https://developers.google.com/android/guides/setup)
-	* Just install all the things it tells you to when IntelliJ/Android Studio yells at you
-* Your own Maps API key and Directions API key (to be placed in app/src/debug/res/values/google_maps_api.xml)
-	* You could also just use mine that I accidentally pushed to this repo (if this was a "real project", no, I wouldn't have done that)
-	* You might be able to use the same key for both, but it wasn't working for me
+	* Just install all the things it tells you to when IntelliJ/Android Studio yells at you... 
 
 ## Bluetooth Stuff
 * Our HC-06 MAC Address: 00:14:03:05:FF:E6 
 * Useful tutorial for the HC-06 with Android: [Control an Arduino with Bluetooth](https://www.allaboutcircuits.com/projects/control-an-arduino-using-your-phone/)
 
 ## TODO
-* Look into storing API Keys in environment variables [ideas link](https://github.com/mapbox/mapbox-gl-native/issues/713)
-* Replace potentially compromised API Keys with new ones, and deactivate the old ones
 * (If have time) work on improving user input (input address, locations API, autocomplete, screen-reading, etc.)
 * Think about calculating what level of curvature of the polyline should be considered a 'turn' (see algorithm.txt)
 * Bluetooth planning
