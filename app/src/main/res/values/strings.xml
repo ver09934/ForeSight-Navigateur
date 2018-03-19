@@ -41,7 +41,7 @@
     <string name="bluetooth_enabled">Bluetooth supported and already enabled\n</string>
 
     <string name="bluetooth_please_pair">Please Pair the Device first\n</string>
-    <string name="bluetooth_device_located">\nTarget HC-06 Located&#8230;\n</string>
+    <string name="bluetooth_device_located">Target HC-06 Located&#8230;\n</string>
 
     <string name="bluetooth_socket_connected">Created connection socket&#8230;\n</string>
     <string name="bluetooth_socket_failed">Failed to create connection socket&#8230;\n</string>
