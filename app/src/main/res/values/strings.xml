@@ -31,6 +31,6 @@
     <string name="bluetooth_connection_failed">Connection to HC-06 failed</string>
     <string name="bluetooth_listening">Listening for data, &#8230;</string> <!-- Listening for data... -->
     <string name="bluetooth_sent_text">Sent data: %1$s</string>
-    <string name="bluetooth_device_located">Target HC-06 Located...</string>
+    <string name="bluetooth_device_located">Target HC-06 Located, &#8230;</string> <!-- Target HC-06 Located... -->
 
 </resources>
