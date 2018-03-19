@@ -1,36 +1,61 @@
+<!-- String Formatting: https://docs.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax -->
+
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- App Name -->
     <string name="app_name">Navigateur</string>
+
+    <!-- Main Activity Buttons -->
     <string name="button_go_to_map">Go to Map</string>
     <string name="button_bluetooth_test">Bluetooth Test</string>
+
+    <!-- Bluetooth Test Activity Buttons -->
+    <string name="bluetooth_function_one">Enable Bluetooth</string>
+    <string name="bluetooth_function_two">Find HC-06</string>
+
+    <!-- Other -->
+    <string name="reserved_button">(Reserved Button)</string>
+    <string name="empty_text_view">(Empty Text View)</string>
+
+    <!-- Maps Activity Name -->
     <string name="title_activity_maps">Map</string>
+
+    <!-- Maps Activity Buttons -->
     <string name="maps_function_one">Clear Selected Point</string>
     <string name="maps_function_two">Get Route</string>
     <string name="maps_function_three">Stop Navigation</string>
     <string name="maps_function_four">Start Bluetooth</string>
     <string name="maps_function_five">Send "b"</string>
     <string name="maps_function_six">(Placeholder Text)</string>
+
+    <!-- Maps Text Box -->
     <string name="map_instructions">Select location to travel to by long-clicking on map.</string>
     <string name="map_instructions_point_pressed">
         Selected location coordinates: <xliff:g id="sel_lat">%1$f</xliff:g>, <xliff:g id="sel_lon">%2$f</xliff:g>
     </string>
-    <!-- Or simply: Selected location coordinates: %1$f, %2$f -->
-    <!-- https://mobikul.com/string-placeholders-formatting-strings-android/ -->
-    <!-- https://stackoverflow.com/questions/3693079/problem-with-system-out-printf-command-in-java -->
-    <!-- https://docs.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax THIS IS THE GOOD ONE-->
-    <!-- https://developer.android.com/guide/topics/resources/string-resource.html -->
+
+    <!-- Bluetooth Text Box -->
     <string name="bluetooth_info_default">(Bluetooth Status Info) - Please pair with and connect to the HC-06</string>
-    <string name="empty_text_view">(Empty Text View)</string>
-    <string name="reserved_button">(Reserved Button)</string>
-    <string name="bluetooth_function_one">Enable Bluetooth</string>
-    <string name="bluetooth_function_two">Find HC-06</string>
+
     <!-- Bluetooth Alerts -->
     <string name="bluetooth_not_supported">Device does not support bluetooth</string>
     <string name="bluetooth_enabled">Bluetooth supported and already enabled</string>
+
     <string name="bluetooth_please_pair">Please Pair the Device first</string>
+    <string name="bluetooth_device_located">Target HC-06 Located&#8230;</string>
+
+    <string name="bluetooth_listening">Listening for data&#8230;</string>
+    <string name="bluetooth_sent_text">Sent data: %1$s</string>
+
+    <string name="bluetooth_socket_connected">Created connection socket&#8230;</string>
+    <string name="bluetooth_socket_failed">Failed to create connection socket&#8230;</string>
+
+    <string name="bluetooth_output_created">Created output stream&#8230;</string>
+    <string name="bluetooth_output_failed">Failed to create output stream&#8230;</string>
+
+    <string name="bluetooth_input_created">Created input stream&#8230;</string>
+    <string name="bluetooth_input_failed">Failed to create input stream&#8230;</string>
+
     <string name="bluetooth_connection_established">Connection established to HC-06</string>
     <string name="bluetooth_connection_failed">Connection to HC-06 failed</string>
-    <string name="bluetooth_listening">Listening for data, &#8230;</string> <!-- Listening for data... -->
-    <string name="bluetooth_sent_text">Sent data: %1$s</string>
-    <string name="bluetooth_device_located">Target HC-06 Located, &#8230;</string> <!-- Target HC-06 Located... -->
 
 </resources>

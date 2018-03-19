@@ -532,28 +532,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             socket = mBluetoothDevice.createRfcommSocketToServiceRecord(PORT_UUID);
             socket.connect();
-            bluetoothTextView.append("Created connection socket...");
+            bluetoothTextView.append(getString(R.string.bluetooth_socket_connected));
         } catch (IOException e) {
             e.printStackTrace();
             connected = false;
-            bluetoothTextView.append("Failed to create connection socket...");
+            bluetoothTextView.append(getString(R.string.bluetooth_socket_failed));
         }
 
         if (connected) {
             try {
                 outputStream=socket.getOutputStream();
-                bluetoothTextView.append("Created output stream...");
+                bluetoothTextView.append(getString(R.string.bluetooth_output_created));
             } catch (IOException e) {
                 e.printStackTrace();
-                bluetoothTextView.append("Failed to create output stream...");
+                bluetoothTextView.append(getString(R.string.bluetooth_output_failed));
             }
 
             try {
                 inputStream=socket.getInputStream();
-                bluetoothTextView.append("Created input stream...");
+                bluetoothTextView.append(getString(R.string.bluetooth_input_created));
             } catch (IOException e) {
                 e.printStackTrace();
-                bluetoothTextView.append("Failed to create input stream...");
+                bluetoothTextView.append(getString(R.string.bluetooth_input_failed));
             }
 
         }
