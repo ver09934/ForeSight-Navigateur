@@ -293,6 +293,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // TODO: Go figure out which segment is the shortest, recording which points it must have involved
             // TODO: These points are needed to determine the heading we must send...
 
+            // TODO: Make sure values are sent only if navigation is active!
+
         }
         return 0;
     }
