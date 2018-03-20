@@ -83,7 +83,11 @@
         android:text="@string/bluetooth_info_default"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:maxLines = "8"
+        android:scrollbars = "vertical"
+        android:gravity="bottom"/>
+    <!-- TODO: May need to change maxLines -->
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"

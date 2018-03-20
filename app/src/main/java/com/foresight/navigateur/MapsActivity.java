@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +59,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         mMapInstructionsView = findViewById(R.id.map_instructions_text);
+
         bluetoothTextView = findViewById(R.id.bluetooth_status_info);
+        bluetoothTextView.setMovementMethod(new ScrollingMovementMethod());
 
         masterMapMethod();
 
@@ -437,6 +440,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentMagneticCompassHeading = Integer.parseInt(inputString);
     }
 
+    public void writeToScreen(String string) {
+        bluetoothTextView.append(string + "\n");
+    }
+
     //----------------
 
     //MASTER BLUETOOTH METHOD
@@ -446,7 +453,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(BTconnect()) {
                 deviceConnected = true;
 
-                // beginListenForData(); //Commented out for testing purposes
+                beginListenForData(); //Commented out for testing purposes
 
                 mMapInstructionsView.append(getString(R.string.bluetooth_listening));
             }
@@ -593,7 +600,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-                                    updateMagneticCompassHeadings(string);
+                                    // updateMagneticCompassHeadings(string);
+                                    writeToScreen(string);
                                 }
                             });
 
