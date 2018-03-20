@@ -99,8 +99,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //==================================== MAPS ===========================================================
     //=====================================================================================================
 
-    private final int FASTEST_UPDATE_SPEED = 2500; //5000
-    private final int UPDATE_SPEED = 5000; //10000
+    private final int FASTEST_UPDATE_SPEED = 1000; //5000
+    private final int UPDATE_SPEED = 2000; //10000
 
     private double[] magneticCompassHeadingArray = new double[20];
 
@@ -189,6 +189,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     // zoomTo(location, 15); // Zoom to current location on map
                     updateCurrentBearing();
+
+                    sendData("z"); // Request bearing update
 
                     if (!paused) {
                         Toast.makeText(getApplicationContext(),
@@ -509,7 +511,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 e.printStackTrace();
             }
 
-            bluetoothTextView.setText(getString(R.string.bluetooth_sent_text, inputString));
+            bluetoothTextView.append(getString(R.string.bluetooth_sent_text, inputString));
         }
     }
 
@@ -627,16 +629,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     try
                     {
                         int byteCount = inputStream.available();
-                        if(byteCount > 0)
+                        if (byteCount > 0)
                         {
                             byte[] rawBytes = new byte[byteCount];
                             inputStream.read(rawBytes);
-                            final String string=new String(rawBytes,"UTF-8");
+                            final String string = new String(rawBytes,"UTF-8");
                             handler.post(new Runnable() {
                                 public void run()
                                 {
                                     bluetoothTextView.append(string + "\n");
-                                    // updateMagneticCompassHeadingArray(string);
+                                    updateMagneticCompassHeadingArray(string);
                                 }
                             });
 
