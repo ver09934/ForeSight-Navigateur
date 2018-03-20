@@ -58,6 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        setupArrays();
+
         mMapInstructionsView = findViewById(R.id.map_instructions_text);
 
         bluetoothTextView = findViewById(R.id.bluetooth_status_info);
@@ -96,12 +98,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //==================================== MAPS ===========================================================
     //=====================================================================================================
 
-    //------------------TODO: Buffer-Like Array------------
-    private double previousMagneticCompassHeading = 0;
-    private double currentMagneticCompassHeading = 0;
+    private double[] magneticCompassHeadingArray = new double[20];
 
-    private double[] magneticCompassHeadingArray = new double[20]; //TODO: Set all to zero in onCreate?
-    //-----------------------------------------------------
+    private Location[] currentLocationArray = new Location[20];
+
+    // Locations obtained using play services location
+    private Location currentLocation = null;
+    private Location previousLocation = null;
+
+    // Bearing between previous and current location
+    private Double currentBearing = null;
 
     // General
     private GoogleMap mMap;
@@ -116,20 +122,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
 
-    //----------------TODO: Buffer-Like Array------------------------
-    // Locations obtained using play services location
-    Location currentLocation = null; // Set to null to start
-    LatLng currentLatLng = null; // Set to null to start
-
-    //Previous location
-    Location previousLocation = null;
-    LatLng previousLatLng = null;
-
-    // Bearing between previous and current location
-    Double currentBearing = null;
-    //--------------------------------------------------------------
-
-
     // Desired Location
     private Marker selectedPointMarker = null;
     LatLng selectedLatLng = null;
@@ -143,8 +135,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
-    // TODO: Add call in onCreate
-    //public void setupArrays() {}
+    public void setupArrays() {
+        for (int i = 0; i < magneticCompassHeadingArray.length; i++) {
+            magneticCompassHeadingArray[i] = 0;
+        }
+        for (int i = 0; i < currentLocationArray.length; i++) {
+            currentLocationArray[i] = null;
+        }
+    }
+
+    public void updateCurrentLocationArray(Location location) {
+
+        for (int i = 0; i < currentLocationArray.length - 1; i++) {
+            currentLocationArray[i] = currentLocationArray[i + 1];
+        }
+        currentLocationArray[currentLocationArray.length - 1] = location;
+
+        currentLocation = currentLocationArray[currentLocationArray.length - 1];
+        previousLocation = currentLocationArray[currentLocationArray.length - 2];
+    }
 
     //----------------------------Main Maps Functions----------------------
     public void masterMapMethod() {
@@ -172,19 +181,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
-                    // Set current location to previous location - do this before we update currentLocation
-                    // TODO: Create a buffer-like ArrayList to store the past 10 or 20 locations - makes it easy to do running averages, etc.
+                    updateCurrentLocationArray(location);
 
-                    if (currentLocation != null) {
-                        previousLocation = currentLocation;
-                        previousLatLng = currentLatLng;
-                    }
-
-                    // addMarkerAndZoomTo(location); // Update UI with location data
-
-                    currentLocation = location;
-                    currentLatLng = getLatLngFromLocation(location);
-
+                    // zoomTo(location, 15); // Zoom to current location on map
                     updateCurrentBearing();
 
                     if (!paused) {
@@ -230,7 +229,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // startLocationUpdates();
     }
 
-    //---------------------------Bearing Logic-----------------------------------------------------------
+    //-------------------Bearing Logic, Routes, Coordinates, and Random Utils---------------------------------------------------
 
     // returns the middle angle formed between all three angles
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
@@ -241,8 +240,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // TODO: Think about the triangles...
     //public double getDistanceToRoute() {}
-
-    //-------------------Working with Routes and Coordinates, and Random Utils-----------------------------
 
     private void updateCurrentBearing() {
         if (currentLocation != null && previousLocation != null) {
@@ -268,11 +265,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Future: origin and destination can also be exact address strings - get then using Places API
-    private void getNewDirectionsResult(LatLng origin, LatLng destination) {
-        if (currentLatLng != null && selectedLatLng != null) {
+    private void getNewDirectionsResult() {
+
+        if (currentLocation != null && selectedLatLng != null) {
+
+            LatLng currentLatLng = getLatLngFromLocation(currentLocation);
+
             // Weird solution for a weird problem
-            com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(origin.latitude, origin.longitude);
-            com.google.maps.model.LatLng convertedDestination = new com.google.maps.model.LatLng(destination.latitude, destination.longitude);
+            com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(currentLatLng.latitude, currentLatLng.longitude);
+            com.google.maps.model.LatLng convertedDestination = new com.google.maps.model.LatLng(selectedLatLng.latitude, selectedLatLng.longitude);
 
             DateTime now = new DateTime();
             try {
@@ -422,7 +423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Request directions
     public void mapsFunctionTwo(View view) {
-        getNewDirectionsResult(currentLatLng, selectedLatLng);
+        getNewDirectionsResult();
     }
 
     // Cancel navigation
@@ -435,13 +436,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapsFunctionFive(View view) {
-        testSend();
+        sendData("b");
     }
 
     public void mapsFunctionSix(View view) {
 
     }
-
 
     //==============================================================================================================
     //=============================================== BLUETOOTH ====================================================
@@ -451,25 +451,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView: use .setText(String) and .append(String)
      */
 
-    // Check input --> this could bork
-    public void updateMagneticCompassHeadings(String inputString) {
-        previousMagneticCompassHeading = currentMagneticCompassHeading;
-        currentMagneticCompassHeading = Double.parseDouble(inputString);
-    }
-
-    //TODO: Finish this
-    public void updateMagneticCompassHeadingsArray(String inputString) {
+    public void updateMagneticCompassHeadingArray(String inputString) {
         try {
-
+            double heading = Double.parseDouble(inputString);
+            for (int i = 0; i < magneticCompassHeadingArray.length - 1; i++) {
+                magneticCompassHeadingArray[i] = magneticCompassHeadingArray[i + 1];
+            }
+            magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1] = heading;
         }
-        // TODO: What type of exception did it actually throw?
-        catch (java.lang.RuntimeException e) {
+        catch (java.lang.NumberFormatException e) {
             e.printStackTrace();
         }
-    }
-
-    public void writeToScreen(String string) {
-        bluetoothTextView.append(string + "\n");
     }
 
     //----------------
@@ -487,10 +479,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-    }
-
-    public void testSend() {
-        sendData("b");
     }
 
     public void sendData(String inputString) {
@@ -628,8 +616,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-                                    // updateMagneticCompassHeadings(string);
-                                    writeToScreen(string);
+                                    bluetoothTextView.append(string + "\n");
+                                    // updateMagneticCompassHeadingArray(string);
                                 }
                             });
 
