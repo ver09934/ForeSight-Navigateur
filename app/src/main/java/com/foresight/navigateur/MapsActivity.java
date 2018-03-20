@@ -161,7 +161,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = currentLocationArray[currentLocationArray.length - 1];
         previousLocation = currentLocationArray[currentLocationArray.length - 2];
 
-        currentLatLng = getLatLngFromLocation(currentLocation);
+        if (currentLocation != null)
+            currentLatLng = getLatLngFromLocation(currentLocation);
+        if (previousLocation != null)
         previousLatLng = getLatLngFromLocation(previousLocation);
     }
 
@@ -280,11 +282,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double firstSegDist = location0.distanceTo(location1);
 
                 if (theta >= 90) {
-                    distanceToSegment = firstSegDist
+                    distanceToSegment = firstSegDist;
                 }
                 else {
                     distanceToSegment = firstSegDist * Math.sin(theta);
                 }
+
+                // test
+                bluetoothTextView.append("Theta: " + Double.toString(theta) + "\n");
+                bluetoothTextView.append(Double.toString(distanceToSegment) + "\n");
 
                 distances.add(distanceToSegment);
 
@@ -497,7 +503,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapsFunctionSix(View view) {
-
+        getDistanceToRoute();
     }
 
     //==============================================================================================================
