@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -246,7 +247,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
         double thetaOne = inputOne.bearingTo(inputTwo);
         double thetaTwo = inputTwo.bearingTo(inputThree);
-        return ((thetaOne == 90) ? 90 : (thetaOne % 90)) + (90 - ((thetaTwo == 90) ? 90 : (thetaTwo % 90))); //TODO: Confirm this works
+        return ((thetaOne == 90) ? 90 : (thetaOne % 90)) + (90 - ((thetaTwo == 90) ? 90 : (thetaTwo % 90))); //TODO: Confirm this works - it probably doesn't...
     }
 
     // TODO: Think about the triangles...
@@ -255,16 +256,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Need to take Rohan's bearing and convert it 0 to 360
      */
     public double getDistanceToRoute() {
+
         ArrayList<Double> distances = new ArrayList<>();
+
         if (routePoints != null) {
 
             for (int i = 0; i < routePoints.size() - 1; i++) {
 
-                LatLng latLng1 = routePoints.get(i);
-                LatLng latLng2 = routePoints.get(i + 1);
-                LatLng currentLatLng = getLatLngFromLocation(currentLocation);
+                double distanceToSegment;
+
+                Location location0 = currentLocation;
+
+                Location location1 = new Location("");
+                location1.setLatitude(routePoints.get(i).latitude);
+                location1.setLongitude(routePoints.get(i).longitude);
+
+                Location location2 = new Location("");
+                location2.setLatitude(routePoints.get(i + 1).latitude);
+                location2.setLongitude(routePoints.get(i + 1).longitude);
+
+                double theta = getFormedAngle(location0, location1, location2);
+
+                double firstSegDist = location0.distanceTo(location1);
+
+                if (theta >= 90) {
+                    distanceToSegment = firstSegDist
+                }
+                else {
+                    distanceToSegment = firstSegDist * Math.sin(theta);
+                }
+
+                distances.add(distanceToSegment);
 
             }
+
+            // TODO: Go figure out which segment is the shortest, recording which points it must have involved
+            // TODO: These points are needed to determine the heading we must send...
 
         }
         return 0;
@@ -359,6 +386,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addPolyline(DirectionsResult results) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+
         routePoints = decodedPath; //Make set of route points accessible by other methods
     }
 
@@ -491,6 +519,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // TODO: Make sure this maps negative angles to 0 <= theta < 360
     public double getRealBearing(String inputString) {
         return Double.parseDouble(inputString);
     }
