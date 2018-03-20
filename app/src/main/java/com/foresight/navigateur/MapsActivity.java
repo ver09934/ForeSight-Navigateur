@@ -96,6 +96,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //==================================== MAPS ===========================================================
     //=====================================================================================================
 
+    //------------------TODO: Buffer-Like Array------------
+    private double previousMagneticCompassHeading = 0;
+    private double currentMagneticCompassHeading = 0;
+
+    private double[] magneticCompassHeadingArray = new double[20]; //TODO: Set all to zero in onCreate?
+    //-----------------------------------------------------
+
     // General
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -109,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
 
+    //----------------TODO: Buffer-Like Array------------------------
     // Locations obtained using play services location
     Location currentLocation = null; // Set to null to start
     LatLng currentLatLng = null; // Set to null to start
@@ -119,6 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Bearing between previous and current location
     Double currentBearing = null;
+    //--------------------------------------------------------------
+
 
     // Desired Location
     private Marker selectedPointMarker = null;
@@ -129,8 +139,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Navigation and route
     private boolean navigationIsActive = false;
-    // TODO: private List<LatLng> routePoints = null;
+    private List<LatLng> routePoints = null;
 
+    //----------------------Setup Location and Heading Arrays-------------------------------
+
+    // TODO: Add call in onCreate
+    //public void setupArrays() {}
+
+    //----------------------------Main Maps Functions----------------------
     public void masterMapMethod() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -199,6 +215,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, getMainLooper()); //Also works fine if looper arg is set to null
     }
 
+    //---------------------------App Pausing and Restarting-----------------------------------------------
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -211,6 +229,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         paused = false;
         // startLocationUpdates();
     }
+
+    //---------------------------Bearing Logic-----------------------------------------------------------
+
+    // returns the middle angle formed between all three angles
+    public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
+        double thetaOne = inputOne.bearingTo(inputTwo);
+        double thetaTwo = inputTwo.bearingTo(inputThree);
+        return ((thetaOne == 90) ? 90 : (thetaOne % 90)) + (90 - ((thetaTwo == 90) ? 90 : (thetaTwo % 90))); //TODO: Confirm this works
+    }
+
+    // TODO: Think about the triangles...
+    //public double getDistanceToRoute() {}
 
     //-------------------Working with Routes and Coordinates, and Random Utils-----------------------------
 
@@ -301,7 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addPolyline(DirectionsResult results) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
-        // TODO: routePoints = decodedPath; //Make set of route points accessible by other methods
+        routePoints = decodedPath; //Make set of route points accessible by other methods
     }
 
     public void stopNavigation() {
@@ -363,7 +393,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Label location with coordinates
-    private Marker addMarkerFromLoaction(Location inputLocation) {
+    private Marker addMarkerFromLocation(Location inputLocation) {
         return addMarkerFromLocation(inputLocation, inputLocation.getLatitude() + ", " + inputLocation.getLongitude());
     }
 
@@ -421,13 +451,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView: use .setText(String) and .append(String)
      */
 
-    private double previousMagneticCompassHeading = 0;
-    private double currentMagneticCompassHeading = 0;
-
     // Check input --> this could bork
     public void updateMagneticCompassHeadings(String inputString) {
         previousMagneticCompassHeading = currentMagneticCompassHeading;
         currentMagneticCompassHeading = Double.parseDouble(inputString);
+    }
+
+    //TODO: Finish this
+    public void updateMagneticCompassHeadingsArray(String inputString) {
+        try {
+
+        }
+        // TODO: What type of exception did it actually throw?
+        catch (java.lang.RuntimeException e) {
+            e.printStackTrace();
+        }
     }
 
     public void writeToScreen(String string) {
