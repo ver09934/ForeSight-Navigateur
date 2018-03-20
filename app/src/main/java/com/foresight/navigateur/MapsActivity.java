@@ -42,6 +42,7 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -242,7 +243,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // TODO: Think about the triangles...
-    //public double getDistanceToRoute() {}
+    public double getDistanceToRoute() {
+        ArrayList<Double> distances = new ArrayList<>();
+        if (routePoints != null) {
+
+            for (int i = 0; i < routePoints.size() - 1; i++) {
+
+                LatLng latLng1 = routePoints.get(i);
+                LatLng latLng2 = routePoints.get(i + 1);
+
+
+
+            }
+
+        }
+        return 0;
+    }
 
     private void updateCurrentBearing() {
         if (currentLocation != null && previousLocation != null) {
