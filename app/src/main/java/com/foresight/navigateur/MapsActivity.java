@@ -109,6 +109,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Locations obtained using play services location
     private Location currentLocation = null;
     private Location previousLocation = null;
+    private LatLng currentLatLng = null;
+    private LatLng previousLatLng = null;
 
     // Bearing between previous and current location
     private Double currentBearing = null;
@@ -157,6 +159,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         currentLocation = currentLocationArray[currentLocationArray.length - 1];
         previousLocation = currentLocationArray[currentLocationArray.length - 2];
+
+        currentLatLng = getLatLngFromLocation(currentLocation);
+        previousLatLng = getLatLngFromLocation(previousLocation);
     }
 
     //----------------------------Main Maps Functions----------------------
@@ -257,8 +262,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 LatLng latLng1 = routePoints.get(i);
                 LatLng latLng2 = routePoints.get(i + 1);
-
-
+                LatLng currentLatLng = getLatLngFromLocation(currentLocation);
 
             }
 
@@ -292,9 +296,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Future: origin and destination can also be exact address strings - get then using Places API
     private void getNewDirectionsResult() {
 
-        if (currentLocation != null && selectedLatLng != null) {
-
-            LatLng currentLatLng = getLatLngFromLocation(currentLocation);
+        if (currentLatLng != null && selectedLatLng != null) {
 
             // Weird solution for a weird problem
             com.google.maps.model.LatLng convertedOrigin = new com.google.maps.model.LatLng(currentLatLng.latitude, currentLatLng.longitude);
