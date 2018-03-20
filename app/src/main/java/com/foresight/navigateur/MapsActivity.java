@@ -140,15 +140,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the mBluetoothDevice, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    // Manipulates the map once available
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -232,8 +224,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng getLatLngFromLocation(Location inputLocation) {
         return new LatLng(inputLocation.getLatitude(), inputLocation.getLongitude());
     }
-
-
 
     //------------------------Directions-------------------------------------------------------
 
@@ -437,7 +427,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Check input --> this could bork
     public void updateMagneticCompassHeadings(String inputString) {
         previousMagneticCompassHeading = currentMagneticCompassHeading;
-        currentMagneticCompassHeading = Integer.parseInt(inputString);
+        currentMagneticCompassHeading = Double.parseDouble(inputString);
     }
 
     public void writeToScreen(String string) {
