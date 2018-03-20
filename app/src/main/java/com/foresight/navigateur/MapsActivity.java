@@ -245,6 +245,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // TODO: Think about the triangles...
+    /*
+    Record section numbers to know which bearing to send the user on...
+    Need to take Rohan's bearing and convert it 0 to 360
+     */
     public double getDistanceToRoute() {
         ArrayList<Double> distances = new ArrayList<>();
         if (routePoints != null) {
@@ -474,7 +478,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void updateMagneticCompassHeadingArray(String inputString) {
         try {
-            double heading = Double.parseDouble(inputString);
+            double heading = getRealBearing(inputString);
             for (int i = 0; i < magneticCompassHeadingArray.length - 1; i++) {
                 magneticCompassHeadingArray[i] = magneticCompassHeadingArray[i + 1];
             }
@@ -483,6 +487,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (java.lang.NumberFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    public double getRealBearing(String inputString) {
+        return Double.parseDouble(inputString);
     }
 
     //----------------
@@ -637,7 +645,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-                                    bluetoothTextView.append(string + "\n");
+                                    bluetoothTextView.append("\"" + string + "\"endOfString");
+                                    // bluetoothTextView.append(string + "\n");
                                     updateMagneticCompassHeadingArray(string);
                                 }
                             });
