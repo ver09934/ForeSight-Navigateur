@@ -98,6 +98,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //==================================== MAPS ===========================================================
     //=====================================================================================================
 
+    private final int FASTEST_UPDATE_SPEED = 2500; //5000
+    private final int UPDATE_SPEED = 5000; //10000
+
     private double[] magneticCompassHeadingArray = new double[20];
 
     private Location[] currentLocationArray = new Location[20];
@@ -204,8 +207,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected void setupLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(UPDATE_SPEED);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_SPEED);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
