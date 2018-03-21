@@ -204,6 +204,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     sendData("z"); // Request bearing update
 
+
+
                     if (!paused) {
                         Toast.makeText(getApplicationContext(),
                                 "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing : "null"),
@@ -249,7 +251,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //-------------------Bearing Logic, Routes, Coordinates, and Random Utils---------------------------------------------------
 
-    // returns the middle angle formed between all three angles
+    // returns the middle angle formed between all three angles, in that order
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
         double thetaOne = inputTwo.bearingTo(inputOne);
         double thetaTwo = inputTwo.bearingTo(inputThree);
@@ -257,10 +259,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (angle > 180) ? angle - 180: angle;
     }
 
+    public double getDistanceToCurrentPoint() {
+        return 0;
+    }
+
+    public void advanceCurrentPoint() {
+
+    }
+
+    public void setFirstPoint() {}
+
+    public double getBearingToCurrentPoint() {
+        return 0;
+    }
+
+    public double getBearingToSend() {
+        return 0;
+    }
+
+
     /*
     Record section numbers to know which bearing to send the user on...
     Need to take Rohan's bearing and convert it 0 to 360
-     */
+
     public double getDistanceToRoute() {
         ArrayList<Double> distances = new ArrayList<>();
 
@@ -272,7 +293,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Location location0 = currentLocation;
 
-                Location location1 = new Location("");
+                Location location1 = getLocationFromLatLng()
+                        //new Location("");
                 location1.setLatitude(routePoints.get(i).latitude);
                 location1.setLongitude(routePoints.get(i).longitude);
 
@@ -317,10 +339,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             addMarkerFromLatLng(closestSegEnd);
 
             return smallestValue;
-            */
+
         }
         return 0;
     }
+    */
 
     private void updateCurrentBearing() {
         if (currentLocation != null && previousLocation != null) {
@@ -331,6 +354,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LatLng getLatLngFromLocation(Location inputLocation) {
         return new LatLng(inputLocation.getLatitude(), inputLocation.getLongitude());
+    }
+
+    private Location getLocationFromLatLng(LatLng inputLatLng) {
+        Location outputLocation = new Location("");
+        outputLocation.setLatitude(inputLatLng.latitude);
+        outputLocation.setLongitude(inputLatLng.longitude);
+        return outputLocation;
     }
 
     //------------------------Directions-------------------------------------------------------
@@ -690,16 +720,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Handler handler = new Handler();
         stopThread = false;
         buffer = new byte[1024];
-        Thread thread  = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                while(!Thread.currentThread().isInterrupted() && !stopThread)
-                {
-                    try
-                    {
+        Thread thread  = new Thread(new Runnable() {
+            public void run() {
+                while(!Thread.currentThread().isInterrupted() && !stopThread) {
+                    try {
                         int byteCount = inputStream.available();
-                        if (byteCount > 0) // TODO: Greater than 1?
+                        if (byteCount > 0)
+                        // TODO: Greater than 1? Get Rohan to pad output with leading zeroes
                         {
                             byte[] rawBytes = new byte[byteCount];
                             inputStream.read(rawBytes);
@@ -715,14 +742,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                     }
-                    catch (IOException ex)
-                    {
+                    catch (IOException ex)                    {
                         stopThread = true;
                     }
                 }
             }
         });
-
         thread.start();
     }
 }
