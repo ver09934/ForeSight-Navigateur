@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -139,6 +140,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // Navigation and route
     private boolean navigationIsActive = false;
     private List<LatLng> routePoints = null;
+
+    LatLng closestSegStart = null;
+    LatLng closestSegEnd = null;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -247,18 +251,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // returns the middle angle formed between all three angles
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
-        double thetaOne = inputOne.bearingTo(inputTwo);
+        double thetaOne = inputTwo.bearingTo(inputOne);
         double thetaTwo = inputTwo.bearingTo(inputThree);
-        return ((thetaOne == 90) ? 90 : (thetaOne % 90)) + (90 - ((thetaTwo == 90) ? 90 : (thetaTwo % 90))); //TODO: Confirm this works - it probably doesn't...
+        double angle = Math.abs(thetaOne - thetaTwo);
+        return (angle > 180) ? angle - 180: angle;
     }
 
-    // TODO: Think about the triangles...
     /*
     Record section numbers to know which bearing to send the user on...
     Need to take Rohan's bearing and convert it 0 to 360
      */
     public double getDistanceToRoute() {
-
         ArrayList<Double> distances = new ArrayList<>();
 
         if (routePoints != null) {
@@ -280,27 +283,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double theta = getFormedAngle(location0, location1, location2);
 
                 double firstSegDist = location0.distanceTo(location1);
-
+                
                 if (theta >= 90) {
                     distanceToSegment = firstSegDist;
                 }
                 else {
-                    distanceToSegment = firstSegDist * Math.sin(theta);
+                    // distanceToSegment = firstSegDist * Math.sin(Math.toRadians(theta));
+                    distanceToSegment = firstSegDist; //TODO: If using this mess, simplify this method
                 }
 
-                // test
-                bluetoothTextView.append("Theta: " + Double.toString(theta) + "\n");
-                bluetoothTextView.append(Double.toString(distanceToSegment) + "\n");
+                bluetoothTextView.append("DIST: " + Double.toString(distanceToSegment) + "\n");
 
                 distances.add(distanceToSegment);
-
             }
 
-            // TODO: Go figure out which segment is the shortest, recording which points it must have involved
-            // TODO: These points are needed to determine the heading we must send...
+            /*
+            int smallestValueIndex = 0;
+            Double smallestValue = distances.get(0);
 
-            // TODO: Make sure values are sent only if navigation is active!
+            for (int i = 0; i < distances.size(); i++) {
+                if (distances.get(i) < smallestValue) {
+                    smallestValueIndex = i;
+                    smallestValue = distances.get(i);
+                }
+            }
 
+            bluetoothTextView.append(Double.toString(smallestValueIndex));
+
+            closestSegStart = routePoints.get(smallestValueIndex);
+            closestSegEnd = routePoints.get(smallestValueIndex + 1);
+
+            addMarkerFromLatLng(closestSegStart);
+            addMarkerFromLatLng(closestSegEnd);
+
+            return smallestValue;
+            */
         }
         return 0;
     }
@@ -360,6 +377,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 addMarkersToMap(results);
                 addPolyline(results);
+
+                // See all points
+                /*
+                for (LatLng test: routePoints)
+                    addMarkerFromLatLng(test);
+                */
 
                 navigationIsActive = true;
 
@@ -676,7 +699,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     try
                     {
                         int byteCount = inputStream.available();
-                        if (byteCount > 0)
+                        if (byteCount > 0) // TODO: Greater than 1?
                         {
                             byte[] rawBytes = new byte[byteCount];
                             inputStream.read(rawBytes);
@@ -684,8 +707,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-                                    bluetoothTextView.append("\"" + string + "\"endOfString");
-                                    // bluetoothTextView.append(string + "\n");
+                                    //bluetoothTextView.append("\"" + string + "\"endOfString");
+                                    bluetoothTextView.append(string + "\n");
                                     updateMagneticCompassHeadingArray(string);
                                 }
                             });
