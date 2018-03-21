@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -43,8 +42,6 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -115,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng previousLatLng = null;
 
     // Bearing between previous and current location
-    private Double currentBearing = null;
+    private Double currentBearingFromTwoLocations = null;
 
     // General
     private GoogleMap mMap;
@@ -138,11 +135,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isFirstTime = true;
 
     // Navigation and route
-    private boolean navigationIsActive = false;
+    private boolean haveRoute = false;
     private List<LatLng> routePoints = null;
 
-    LatLng closestSegStart = null;
-    LatLng closestSegEnd = null;
+    private LatLng currentNavPoint = null;
+    int currentNavPointIndex;
+    private boolean navigationIsActive = false;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -200,15 +198,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     updateCurrentLocationArray(location);
 
                     // zoomTo(location, 15); // Zoom to current location on map
-                    updateCurrentBearing();
+                    updateCurrentBearing(); // Update current l
 
                     sendData("z"); // Request bearing update
 
-
+                    // TODO: Navigation
+                    if (navigationIsActive) {}
 
                     if (!paused) {
                         Toast.makeText(getApplicationContext(),
-                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearing != null) ? currentBearing : "null"),
+                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearingFromTwoLocations != null) ? currentBearingFromTwoLocations : "null"),
                                 Toast.LENGTH_SHORT).show();
                     }
 
@@ -252,6 +251,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //-------------------Bearing Logic, Routes, Coordinates, and Random Utils---------------------------------------------------
 
     // returns the middle angle formed between all three angles, in that order
+    // Gives Minor Angle!
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
         double thetaOne = inputTwo.bearingTo(inputOne);
         double thetaTwo = inputTwo.bearingTo(inputThree);
@@ -259,17 +259,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (angle > 180) ? angle - 180: angle;
     }
 
-    public double getDistanceToCurrentPoint() {
+    public double getDistanceToCurrentNavPoint() {
+        if (currentNavPoint != null) {
+            return currentLocation.distanceTo(getLocationFromLatLng(currentNavPoint));
+        }
         return 0;
     }
 
-    public void advanceCurrentPoint() {
+    public void advanceCurrentNavPoint() {
+        if (currentNavPointIndex < routePoints.size() - 1) {
+            currentNavPointIndex++;
+            currentNavPoint = routePoints.get(currentNavPointIndex);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Navigation completed!", Toast.LENGTH_LONG).show();
 
+        }
     }
 
-    public void setFirstPoint() {}
+    public void setFirstNavPoint() {
+        if (routePoints != null) {
+            currentNavPointIndex = 0;
+            currentNavPoint = routePoints.get(currentNavPointIndex);
+        }
+    }
 
-    public double getBearingToCurrentPoint() {
+    public double getBearingToCurrentNavPoint() {
+        if (currentNavPoint != null) {
+            return currentLocation.bearingTo(getLocationFromLatLng(currentNavPoint));
+        }
         return 0;
     }
 
@@ -277,6 +295,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return 0;
     }
 
+    public void toggleNavigationIsActive() {
+        // navigationIsActive = !navigationIsActive;
+        if (navigationIsActive) {
+            navigationIsActive = false;
+            Toast.makeText(getApplicationContext(), "Navigation terminated", Toast.LENGTH_LONG).show();
+        }
+        else {
+            navigationIsActive = true;
+            Toast.makeText(getApplicationContext(), "Navigation started", Toast.LENGTH_LONG).show();
+        }
+    }
 
     /*
     Record section numbers to know which bearing to send the user on...
@@ -348,7 +377,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateCurrentBearing() {
         if (currentLocation != null && previousLocation != null) {
             double bearing = (double) previousLocation.bearingTo(currentLocation);
-            currentBearing = (bearing >= 0) ? bearing : bearing +360;
+            currentBearingFromTwoLocations = (bearing >= 0) ? bearing : bearing + 360;
         }
     }
 
@@ -414,7 +443,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     addMarkerFromLatLng(test);
                 */
 
-                navigationIsActive = true;
+                haveRoute = true;
 
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
@@ -451,10 +480,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routePoints = decodedPath; //Make set of route points accessible by other methods
     }
 
-    public void stopNavigation() {
-        if (navigationIsActive) {
+    public void clearRoute() {
+        if (haveRoute) {
             mMap.clear();
-            navigationIsActive = false;
+            haveRoute = false;
             addSelectedPointMarker();
         }
     }
@@ -463,9 +492,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapLongClick(LatLng point) {
-        if (selectedPointMarker != null && !navigationIsActive)
+        if (selectedPointMarker != null && !haveRoute)
             selectedPointMarker.remove();
-        if (!navigationIsActive) {
+        if (!haveRoute) {
             mMapInstructionsView.setText(getString((R.string.map_instructions_point_pressed), point.latitude, point.longitude));
             selectedPointMarker = addMarkerFromLatLng(point);
             selectedLatLng = point;
@@ -474,7 +503,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Reset end location and stop navigation
     private void resetPointSelection() {
-        if (!navigationIsActive) {
+        if (!haveRoute) {
             if (selectedPointMarker != null)
                 selectedPointMarker.remove();
             selectedPointMarker = null;
@@ -544,7 +573,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // Cancel navigation
     public void mapsFunctionThree(View view) {
-        stopNavigation();
+        clearRoute();
     }
 
     public void mapsFunctionFour(View view) {
@@ -556,7 +585,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapsFunctionSix(View view) {
-        getDistanceToRoute();
+        // getDistanceToRoute();
     }
 
     //==============================================================================================================

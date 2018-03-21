@@ -22,7 +22,7 @@
     <!-- Maps Activity Buttons -->
     <string name="maps_function_one">Clear Selected Point</string>
     <string name="maps_function_two">Get Route</string>
-    <string name="maps_function_three">Stop Navigation</string>
+    <string name="maps_function_three">Clear Route</string>
     <string name="maps_function_four">Start Bluetooth</string>
     <string name="maps_function_five">Send "b"</string>
     <string name="maps_function_six">(Placeholder Text)</string>
