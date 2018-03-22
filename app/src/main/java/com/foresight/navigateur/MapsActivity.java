@@ -300,6 +300,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return 0;
     }
 
+    // TODO: Issue: Angle is still sometimes negative... suspect angle ends up less than -360?
     public double getBearingToSend() {
         double intendedBearing = getBearingToCurrentNavPoint();
         double realBearing = getCurrentAverageHeading();
