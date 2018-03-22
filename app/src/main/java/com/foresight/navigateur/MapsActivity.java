@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int currentNavPointIndex;
     private boolean navigationIsActive = false;
 
-    public double currentAverageHeading = 0;
+    //public double currentAverageHeading = 0;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -212,20 +212,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             advanceCurrentNavPoint();
 
                         mMapInstructionsView.append("\nDistance to next point: " + getDistanceToCurrentNavPoint());
+                        mMapInstructionsView.append("\nBearing to next point: " + getBearingToSend());
                         mMapInstructionsView.append("\nCurrent NavPoint index: " + Integer.toString(currentNavPointIndex) + "/" + Integer.toString(routePoints.size()));
 
                         // after assigning new raw headings
-                        computeCurrentAverageHeading();
+                        //getCurrentAverageHeading();
 
-                        Double heading
-                        String toSend = getLetterFromAngle(currentAverageHeading);
+                        String toSend = getLetterFromAngle(getBearingToSend());
                         sendData(toSend);
                     }
 
 
                     if (!paused) {
                         Toast.makeText(getApplicationContext(),
-                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearingFromTwoLocations != null) ? currentBearingFromTwoLocations : "null"),
+                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearingFromTwoLocations != -1) ? currentBearingFromTwoLocations : "null"),
                                 Toast.LENGTH_SHORT).show();
                     }
 
@@ -302,26 +302,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public double getBearingToSend() {
         double intendedBearing = getBearingToCurrentNavPoint();
-        double realBearing = currentAverageHeading;
+        double realBearing = getCurrentAverageHeading();
         double diffBearing = intendedBearing - realBearing;
         diffBearing = (diffBearing >= 0) ? diffBearing : diffBearing + 360;
         return diffBearing;
     }
 
-    public void computeCurrentAverageHeading() {
+    public double getCurrentAverageHeading() {
         // TODO: Insure these are all 0 <= theta < 360
         if (currentLocation != null && currentBearingFromTwoLocations != -1 && avgThreeMagHeadings() != 0) {
             double heading1 = currentBearingFromTwoLocations;
             double heading2 = currentLocation.getBearing();
             double heading3 = avgThreeMagHeadings();
-            currentAverageHeading = (heading1 + heading2 + heading3) / 3;
+            //currentAverageHeading = (heading1 + heading2 + heading3) / 3;
+            return (heading1 + heading2 + heading3) / 3;
         }
         else if (currentBearingFromTwoLocations != -1)
-            currentAverageHeading = currentBearingFromTwoLocations;
+            //currentAverageHeading = currentBearingFromTwoLocations;
+            return currentBearingFromTwoLocations;
         else if (currentLocation != null)
-            currentAverageHeading = currentLocation.getBearing();
+            //currentAverageHeading = currentLocation.getBearing();
+            return currentLocation.getBearing();
         else
-            currentAverageHeading = 0;
+            //currentAverageHeading = 0;
+            return 0;
     }
 
     public void toggleNavigationIsActive() {
@@ -501,7 +505,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addMarkersToMap(results);
                 addPolyline(results);
 
-                toggleNavigationIsActive(); // Start navigation once we have a directions result
+                // toggleNavigationIsActive(); // Start navigation once we have a directions result
 
                 // See all points
                 /*
