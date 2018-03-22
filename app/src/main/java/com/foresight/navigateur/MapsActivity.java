@@ -825,7 +825,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 while(!Thread.currentThread().isInterrupted() && !stopThread) {
                     try {
                         int byteCount = inputStream.available();
-                        if (byteCount > 2)
+                        if (byteCount > 1)
                         // TODO: Greater than 1? Get Rohan to pad output with leading zeroes
                         {
                             byte[] rawBytes = new byte[byteCount];
