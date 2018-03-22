@@ -200,7 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     updateCurrentLocationArray(location);
 
                     // zoomTo(location, 15); // Zoom to current location on map
-                    updateCurrentBearing(); // Update current l
+                    updateCurrentBearingFromTwoLocations(); // Update current l
 
                     sendData("z"); // Request bearing
 
@@ -303,7 +303,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double getBearingToSend() {
         double intendedBearing = getBearingToCurrentNavPoint();
         double realBearing = currentAverageHeading;
-        return 0;
+        double diffBearing = intendedBearing - realBearing;
+        diffBearing = (diffBearing >= 0) ? diffBearing : diffBearing + 360;
+        return diffBearing;
     }
 
     public void computeCurrentAverageHeading() {
@@ -436,7 +438,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     */
 
-    private void updateCurrentBearing() {
+    private void updateCurrentBearingFromTwoLocations() {
         if (currentLocation != null && previousLocation != null) {
             double bearing = (double) previousLocation.bearingTo(currentLocation);
             currentBearingFromTwoLocations = (bearing >= 0) ? bearing : bearing + 360;
