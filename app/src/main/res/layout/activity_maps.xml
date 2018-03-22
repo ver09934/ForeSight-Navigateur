@@ -25,12 +25,6 @@
             android:onClick="mapsFunctionTwo"
             android:text="@string/maps_function_two" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <Button
             android:id="@+id/maps_function_3"
             android:layout_width="wrap_content"
@@ -39,6 +33,12 @@
             android:onClick="mapsFunctionThree"
             android:text="@string/maps_function_three" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/maps_function_4"
             android:layout_width="wrap_content"
@@ -46,12 +46,6 @@
             android:layout_weight="0.5"
             android:onClick="mapsFunctionFour"
             android:text="@string/maps_function_four" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/maps_function_5"
@@ -71,12 +65,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/maps_function_7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:onClick="mapsFunctionSeven"
+            android:text="@string/maps_function_seven" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/map_instructions_text"
         android:text="@string/map_instructions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"/>
+        android:padding="5dp"
+
+        android:maxLines = "8"
+        android:scrollbars = "vertical"
+        android:gravity="bottom"/>
 
     <TextView
         android:id="@+id/bluetooth_status_info"
@@ -84,6 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
+
         android:maxLines = "8"
         android:scrollbars = "vertical"
         android:gravity="bottom"/>

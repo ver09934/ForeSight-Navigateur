@@ -61,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setupArrays();
 
         mMapInstructionsView = findViewById(R.id.map_instructions_text);
+        mMapInstructionsView.setMovementMethod(new ScrollingMovementMethod());
 
         bluetoothTextView = findViewById(R.id.bluetooth_status_info);
         bluetoothTextView.setMovementMethod(new ScrollingMovementMethod());
@@ -103,9 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private double[] magneticCompassHeadingArray = new double[20];
 
-    private Location[] currentLocationArray = new Location[20];
-
     // Locations obtained using play services location
+    private Location[] currentLocationArray = new Location[20];
     private Location currentLocation = null;
     private Location previousLocation = null;
     private LatLng currentLatLng = null;
@@ -141,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentNavPoint = null;
     int currentNavPointIndex;
     private boolean navigationIsActive = false;
+    public double currentAverageHeading;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -305,6 +306,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             navigationIsActive = true;
             Toast.makeText(getApplicationContext(), "Navigation started", Toast.LENGTH_LONG).show();
         }
+    }
+
+    /*
+    Takes in angle 0-360 (or 0-359.99?)
+    Could convert ascii to int and map from 0-360 using floors and stuff, but this is just easier...
+    */
+    public String getLetterFromAngle(Double angle) {
+        if (0 <= angle && angle < 45)
+            return "a";
+        if (45 <= angle && angle < 90)
+            return "b";
+        if (135 <= angle && angle < 180)
+            return "c";
+        if (180 <= angle && angle < 225)
+            return "d";
+        if (225 <= angle && angle < 270)
+            return "e";
+        if (270 <= angle && angle < 315)
+            return "f";
+        if (315 <= angle && angle < 360)
+            return "g";
+        return "a"; // In case something weird happens
+    }
+
+    public void computeCurrentAverageHeading() {
+        // (if anything is null, don’t include it in the average)
     }
 
     /*
@@ -588,6 +615,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // getDistanceToRoute();
     }
 
+    public void mapsFunctionSeven(View view) {
+        toggleNavigationIsActive();
+    }
+
     //==============================================================================================================
     //=============================================== BLUETOOTH ====================================================
     //==============================================================================================================
@@ -754,7 +785,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 while(!Thread.currentThread().isInterrupted() && !stopThread) {
                     try {
                         int byteCount = inputStream.available();
-                        if (byteCount > 0)
+                        if (byteCount > 1)
                         // TODO: Greater than 1? Get Rohan to pad output with leading zeroes
                         {
                             byte[] rawBytes = new byte[byteCount];
@@ -763,6 +794,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
+                                    // Receive string with double such that value of theta is  0 <= theta < 360
                                     //bluetoothTextView.append("\"" + string + "\"endOfString");
                                     bluetoothTextView.append(string + "\n");
                                     updateMagneticCompassHeadingArray(string);
