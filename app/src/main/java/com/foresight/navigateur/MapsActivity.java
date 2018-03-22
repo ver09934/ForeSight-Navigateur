@@ -219,7 +219,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         sendData(getLetterFromAngle(getBearingToSend()));
 
-
+                        updateCameraBearing(mMap, (float) getCurrentAverageHeading());
 
                     }
 
@@ -526,6 +526,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             zoomTo(currentLocation, 13);
             isFirstTime = false;
         }
+    }
+
+    private void updateCameraBearing(GoogleMap googleMap, float bearing) {
+        if ( googleMap == null) return;
+        CameraPosition camPos = CameraPosition
+                .builder(
+                        googleMap.getCameraPosition() // current Camera
+                )
+                .bearing(bearing)
+                .build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
     }
 
     //------------------------User Functions------------------------------
