@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         masterMapMethod();
 
-        //masterBluetoothMethod();
+        mapsButton7 = (Button) findViewById(R.id.maps_function_7);
     }
 
     @Override
@@ -103,6 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int UPDATE_SPEED = 2000; //10000
 
     private double[] magneticCompassHeadingArray = new double[20];
+    private Double currentMagneticCompassHeading = null;
 
     // Locations obtained using play services location
     private Location[] currentLocationArray = new Location[20];
@@ -112,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng previousLatLng = null;
 
     // Bearing between previous and current location
-    private double currentBearingFromTwoLocations = -1;
+    private Double currentBearingFromTwoLocations = null;
 
     // General
     private GoogleMap mMap;
@@ -122,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     boolean paused = false;
     private TextView mMapInstructionsView;
     private TextView bluetoothTextView;
+    private Button mapsButton7;
 
     // Using play services location
     private LocationRequest mLocationRequest;
@@ -139,10 +142,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<LatLng> routePoints = null;
 
     private LatLng currentNavPoint = null;
-    int currentNavPointIndex;
+    private Integer currentNavPointIndex = null;
     private boolean navigationIsActive = false;
-
-    //public double currentAverageHeading = 0;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -168,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (currentLocation != null)
             currentLatLng = getLatLngFromLocation(currentLocation);
         if (previousLocation != null)
-        previousLatLng = getLatLngFromLocation(previousLocation);
+            previousLatLng = getLatLngFromLocation(previousLocation);
     }
 
     //----------------------------Main Maps Functions----------------------
@@ -204,29 +205,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     sendData("z"); // Request bearing
 
-
-                    // TODO: Navigation
                     if (navigationIsActive) {
 
-                        if (getDistanceToCurrentNavPoint() <= 5)
+                        if (currentNavPointIndex == null)
+                            setFirstNavPoint();
+
+                        if (getDistanceToCurrentNavPoint() <= 10)
                             advanceCurrentNavPoint();
 
                         mMapInstructionsView.append("\nDistance to next point: " + getDistanceToCurrentNavPoint());
-                        mMapInstructionsView.append("\nBearing to next point: " + getBearingToSend());
+                        mMapInstructionsView.append("\nBearing to take to next point: " + getBearingToSend());
                         mMapInstructionsView.append("\nCurrent NavPoint index: " + Integer.toString(currentNavPointIndex) + "/" + Integer.toString(routePoints.size()));
 
-                        // after assigning new raw headings
-                        //getCurrentAverageHeading();
-
-                        String toSend = getLetterFromAngle(getBearingToSend());
-                        sendData(toSend);
-                    }
+                        sendData(getLetterFromAngle(getBearingToSend()));
 
 
-                    if (!paused) {
-                        Toast.makeText(getApplicationContext(),
-                                "Bearing from 1 Location: " + location.getBearing() + "\nBearing from 2 Locations: " + ((currentBearingFromTwoLocations != -1) ? currentBearingFromTwoLocations : "null"),
-                                Toast.LENGTH_SHORT).show();
+
                     }
 
                     zoomFirstTime();
@@ -288,7 +282,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setFirstNavPoint() {
         if (routePoints != null) {
-            currentNavPointIndex = 0;
+            currentNavPointIndex = 0; // Start at second point
             currentNavPoint = routePoints.get(currentNavPointIndex);
         }
     }
@@ -300,51 +294,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return 0;
     }
 
-    // TODO: Issue: Angle is still sometimes negative... suspect angle ends up less than -360?
     public double getBearingToSend() {
-        double intendedBearing = getBearingToCurrentNavPoint();
+
         double realBearing = getCurrentAverageHeading();
+
+        double intendedBearing = getBearingToCurrentNavPoint();
         double diffBearing = intendedBearing - realBearing;
+
         diffBearing = (diffBearing >= 0) ? diffBearing : diffBearing + 360;
+
         return diffBearing;
     }
 
     public double getCurrentAverageHeading() {
-        // TODO: Insure these are all 0 <= theta < 360
-        if (currentLocation != null && currentBearingFromTwoLocations != -1 && avgThreeMagHeadings() != 0) {
-            double heading1 = currentBearingFromTwoLocations;
-            double heading2 = currentLocation.getBearing();
-            double heading3 = avgThreeMagHeadings();
-            //currentAverageHeading = (heading1 + heading2 + heading3) / 3;
-            return (heading1 + heading2 + heading3) / 3;
+
+        double sum = 0;
+        double denom = 0;
+
+        // if (currentMagneticCompassHeading != null) {}
+        if (currentLocation != null) {
+            sum += currentLocation.getBearing();
+            denom++;
         }
-        else if (currentBearingFromTwoLocations != -1)
-            //currentAverageHeading = currentBearingFromTwoLocations;
-            return currentBearingFromTwoLocations;
-        else if (currentLocation != null)
-            //currentAverageHeading = currentLocation.getBearing();
-            return currentLocation.getBearing();
+
+        if (currentBearingFromTwoLocations != null) {
+            sum += currentBearingFromTwoLocations;
+            denom++;
+        }
+
+        if (denom != 0) {
+            return sum / denom;
+        }
         else
-            //currentAverageHeading = 0;
             return 0;
     }
 
     public void toggleNavigationIsActive() {
-        // navigationIsActive = !navigationIsActive;
         if (navigationIsActive) {
             navigationIsActive = false;
-            Toast.makeText(getApplicationContext(), "Navigation terminated", Toast.LENGTH_LONG).show();
+            mapsButton7.setText(getString(R.string.maps_function_seven));
         }
         else {
             navigationIsActive = true;
-            Toast.makeText(getApplicationContext(), "Navigation started", Toast.LENGTH_LONG).show();
+            mapsButton7.setText(getString(R.string.maps_function_seven_alt));
         }
     }
 
-    /*
-    Takes in angle 0-360 (or 0-359.99?)
-    Could convert ascii to int and map from 0-360 using floors and stuff, but this is just easier...
-    */
     public String getLetterFromAngle(Double angle) {
         if (0 <= angle && angle < 45)
             return "a";
@@ -361,17 +356,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (315 <= angle && angle < 360)
             return "g";
         return "a"; // In case something weird happens
-    }
-
-
-    // Not used at this point, I don't think...
-    // returns the middle angle formed between all three angles, in that order
-    // Gives Minor Angle!
-    public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
-        double thetaOne = inputTwo.bearingTo(inputOne);
-        double thetaTwo = inputTwo.bearingTo(inputThree);
-        double angle = Math.abs(thetaOne - thetaTwo);
-        return (angle > 180) ? angle - 180: angle;
     }
 
     private void updateCurrentBearingFromTwoLocations() {
@@ -427,14 +411,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 addMarkersToMap(results);
                 addPolyline(results);
-
-                // toggleNavigationIsActive(); // Start navigation once we have a directions result
-
-                // See all points
-                /*
-                for (LatLng test: routePoints)
-                    addMarkerFromLatLng(test);
-                */
 
                 haveRoute = true;
 
@@ -589,49 +565,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //=============================================== BLUETOOTH ====================================================
     //==============================================================================================================
 
-    /*
-    TextView: use .setText(String) and .append(String)
-     */
-
     public void updateMagneticCompassHeadingArray(String inputString) {
         try {
-            double heading = getRealBearing(inputString);
+            double heading = Double.parseDouble(inputString);
+            heading = (heading >= 0) ? heading : heading + 360;
+
             for (int i = 0; i < magneticCompassHeadingArray.length - 1; i++) {
                 magneticCompassHeadingArray[i] = magneticCompassHeadingArray[i + 1];
             }
             magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1] = heading;
+
+            currentMagneticCompassHeading = magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1];
+
         }
+
         catch (java.lang.NumberFormatException e) {
             e.printStackTrace();
         }
-    }
-
-    // TODO: Make sure this maps negative angles to 0 <= theta < 360
-    public double getRealBearing(String inputString) {
-        double angle = Double.parseDouble(inputString);
-        return (angle >= 0) ? angle : angle + 360;
-    }
-
-    private double avgThreeMagHeadings() {
-        int sum = 0;
-        int denom = 0;
-        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1] != -1) {
-            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1];
-            denom++;
-        }
-        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2] != -1) {
-            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2];
-            denom++;
-        }
-        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3] != -1) {
-            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3];
-            denom++;
-        }
-
-        if (denom != 0)
-            return sum/denom;
-        else
-            return 0;
     }
 
     //----------------
@@ -659,7 +609,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             bluetoothTextView.append(getString(R.string.bluetooth_sent_text, inputString));
         }
     }

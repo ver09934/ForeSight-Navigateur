@@ -26,7 +26,8 @@
     <string name="maps_function_four">Start Bluetooth</string>
     <string name="maps_function_five">Send "b"</string>
     <string name="maps_function_six">Debug</string>
-    <string name="maps_function_seven">Toggle Navigation</string>
+    <string name="maps_function_seven">Start Navigation</string>
+    <string name="maps_function_seven_alt">Stop Navigation</string>
 
     <!-- Maps Text Box -->
     <string name="map_instructions">Select destination by long-clicking on map</string>
