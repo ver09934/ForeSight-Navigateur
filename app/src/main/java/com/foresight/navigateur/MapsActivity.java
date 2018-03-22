@@ -147,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setupArrays() {
         for (int i = 0; i < magneticCompassHeadingArray.length; i++) {
-            magneticCompassHeadingArray[i] = 0;
+            magneticCompassHeadingArray[i] = -1;
         }
         for (int i = 0; i < currentLocationArray.length; i++) {
             currentLocationArray[i] = null;
@@ -201,10 +201,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // zoomTo(location, 15); // Zoom to current location on map
                     updateCurrentBearing(); // Update current l
 
-                    sendData("z"); // Request bearing update
+                    sendData("z"); // Request bearing
 
+
+                    /*
                     // TODO: Navigation
-                    if (navigationIsActive) {}
+                    if (navigationIsActive) {
+                        // after assigning new raw headings
+                        computeCurrentAverageHeading();
+                        String toSend = getLetterFromAngle(currentAverageHeading);
+                        sendData(toSend);
+                    }
+                    */
+
 
                     if (!paused) {
                         Toast.makeText(getApplicationContext(),
@@ -251,15 +260,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //-------------------Bearing Logic, Routes, Coordinates, and Random Utils---------------------------------------------------
 
-    // returns the middle angle formed between all three angles, in that order
-    // Gives Minor Angle!
-    public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
-        double thetaOne = inputTwo.bearingTo(inputOne);
-        double thetaTwo = inputTwo.bearingTo(inputThree);
-        double angle = Math.abs(thetaOne - thetaTwo);
-        return (angle > 180) ? angle - 180: angle;
-    }
-
     public double getDistanceToCurrentNavPoint() {
         if (currentNavPoint != null) {
             return currentLocation.distanceTo(getLocationFromLatLng(currentNavPoint));
@@ -274,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             Toast.makeText(getApplicationContext(), "Navigation completed!", Toast.LENGTH_LONG).show();
-
+            navigationIsActive = false;
         }
     }
 
@@ -293,7 +293,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public double getBearingToSend() {
+        //double bearing = get
         return 0;
+    }
+
+    public void computeCurrentAverageHeading() {
+        // TODO: Insure these are all 0 <= theta < 360
+        double heading1 = currentBearingFromTwoLocations;
+        double heading2 = currentLocation.getBearing();
+        //double heading3 =
     }
 
     public void toggleNavigationIsActive() {
@@ -330,9 +338,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return "a"; // In case something weird happens
     }
 
-    public void computeCurrentAverageHeading() {
-        // (if anything is null, don’t include it in the average)
+
+
+    // returns the middle angle formed between all three angles, in that order
+    // Gives Minor Angle!
+    public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
+        double thetaOne = inputTwo.bearingTo(inputOne);
+        double thetaTwo = inputTwo.bearingTo(inputThree);
+        double angle = Math.abs(thetaOne - thetaTwo);
+        return (angle > 180) ? angle - 180: angle;
     }
+
+
 
     /*
     Record section numbers to know which bearing to send the user on...
@@ -612,7 +629,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapsFunctionSix(View view) {
-        // getDistanceToRoute();
+        bluetoothTextView.append("\nDOOT!");
     }
 
     public void mapsFunctionSeven(View view) {
@@ -642,7 +659,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // TODO: Make sure this maps negative angles to 0 <= theta < 360
     public double getRealBearing(String inputString) {
-        return Double.parseDouble(inputString);
+        double angle = Double.parseDouble(inputString);
+        return (angle >= 0) ? angle : angle + 360;
+    }
+
+    private double avgThreeMagHeadings() {
+        int sum = 0;
+        int denom = 0;
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1] != -1) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1];
+            denom++;
+        }
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2] != -1) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2];
+            denom++;
+        }
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3] != -1) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3];
+            denom++;
+        }
+
+        if (denom != 0)
+            return sum/denom;
+        else
+            return 0;
     }
 
     //----------------
@@ -785,7 +825,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 while(!Thread.currentThread().isInterrupted() && !stopThread) {
                     try {
                         int byteCount = inputStream.available();
-                        if (byteCount > 1)
+                        if (byteCount > 2)
                         // TODO: Greater than 1? Get Rohan to pad output with leading zeroes
                         {
                             byte[] rawBytes = new byte[byteCount];
@@ -803,7 +843,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         }
                     }
-                    catch (IOException ex)                    {
+                    catch (IOException ex) {
                         stopThread = true;
                     }
                 }

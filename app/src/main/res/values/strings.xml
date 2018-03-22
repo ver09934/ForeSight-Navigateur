@@ -34,6 +34,8 @@
         Selected location coordinates: <xliff:g id="sel_lat">%1$f</xliff:g>, <xliff:g id="sel_lon">%2$f</xliff:g>
     </string>
 
+    <!-- TODO: Do something like string = "\n" + string for all these newlines -->
+
     <!-- Bluetooth Text Box -->
     <string name="bluetooth_info_default">Bluetooth Info: Pair with and connect to HC-06</string>
 
