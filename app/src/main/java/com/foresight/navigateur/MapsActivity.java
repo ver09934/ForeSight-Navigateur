@@ -535,6 +535,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         googleMap.getCameraPosition() // current Camera
                 )
                 .bearing(bearing)
+                .target(getLatLngFromLocation(currentLocation))
                 .build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
     }
