@@ -374,75 +374,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return (angle > 180) ? angle - 180: angle;
     }
 
-
-
-    /*
-    Record section numbers to know which bearing to send the user on...
-    Need to take Rohan's bearing and convert it 0 to 360
-
-    public double getDistanceToRoute() {
-        ArrayList<Double> distances = new ArrayList<>();
-
-        if (routePoints != null) {
-
-            for (int i = 0; i < routePoints.size() - 1; i++) {
-
-                double distanceToSegment;
-
-                Location location0 = currentLocation;
-
-                Location location1 = getLocationFromLatLng()
-                        //new Location("");
-                location1.setLatitude(routePoints.get(i).latitude);
-                location1.setLongitude(routePoints.get(i).longitude);
-
-                Location location2 = new Location("");
-                location2.setLatitude(routePoints.get(i + 1).latitude);
-                location2.setLongitude(routePoints.get(i + 1).longitude);
-
-                double theta = getFormedAngle(location0, location1, location2);
-
-                double firstSegDist = location0.distanceTo(location1);
-                
-                if (theta >= 90) {
-                    distanceToSegment = firstSegDist;
-                }
-                else {
-                    // distanceToSegment = firstSegDist * Math.sin(Math.toRadians(theta));
-                    distanceToSegment = firstSegDist; //TODO: If using this mess, simplify this method
-                }
-
-                bluetoothTextView.append("DIST: " + Double.toString(distanceToSegment) + "\n");
-
-                distances.add(distanceToSegment);
-            }
-
-            /*
-            int smallestValueIndex = 0;
-            Double smallestValue = distances.get(0);
-
-            for (int i = 0; i < distances.size(); i++) {
-                if (distances.get(i) < smallestValue) {
-                    smallestValueIndex = i;
-                    smallestValue = distances.get(i);
-                }
-            }
-
-            bluetoothTextView.append(Double.toString(smallestValueIndex));
-
-            closestSegStart = routePoints.get(smallestValueIndex);
-            closestSegEnd = routePoints.get(smallestValueIndex + 1);
-
-            addMarkerFromLatLng(closestSegStart);
-            addMarkerFromLatLng(closestSegEnd);
-
-            return smallestValue;
-
-        }
-        return 0;
-    }
-    */
-
     private void updateCurrentBearingFromTwoLocations() {
         if (currentLocation != null && previousLocation != null) {
             double bearing = (double) previousLocation.bearingTo(currentLocation);
@@ -484,15 +415,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             DateTime now = new DateTime();
             try {
-                /*
-                DirectionsResult results = new DirectionsApiRequest(getGeoContext())
-                        //.newRequest(getGeoContext())
-                        .mode(TravelMode.WALKING)
-                        .origin(convertedOrigin)
-                        .destination(convertedDestination)
-                        .departureTime(now)
-                        .await();
-                */
                 DirectionsResult results = DirectionsApi
                         .newRequest(getGeoContext())
                         .mode(TravelMode.WALKING)
@@ -830,17 +752,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
 
-        /*
-        if (connected) {
-            bluetoothTextView.append("\n" + getString(R.string.bluetooth_connection_established));
-        }
-        else {
-            bluetoothTextView.append("\n" + getString(R.string.bluetooth_connection_failed));
-        }
-        */
-
         return connected;
-
     }
 
     void beginListenForData() {
@@ -861,8 +773,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             handler.post(new Runnable() {
                                 public void run()
                                 {
-                                    // Receive string with double such that value of theta is  0 <= theta < 360
-                                    //bluetoothTextView.append("\"" + string + "\"endOfString");
                                     bluetoothTextView.append("\n" + string);
                                     updateMagneticCompassHeadingArray(string);
                                 }
