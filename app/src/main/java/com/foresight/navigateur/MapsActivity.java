@@ -112,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng previousLatLng = null;
 
     // Bearing between previous and current location
-    private Double currentBearingFromTwoLocations = null;
+    private double currentBearingFromTwoLocations = -1;
 
     // General
     private GoogleMap mMap;
@@ -141,7 +141,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng currentNavPoint = null;
     int currentNavPointIndex;
     private boolean navigationIsActive = false;
-    public double currentAverageHeading;
+
+    public double currentAverageHeading = 0;
 
     //----------------------Setup Location and Heading Arrays-------------------------------
 
@@ -204,15 +205,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     sendData("z"); // Request bearing
 
 
-                    /*
                     // TODO: Navigation
                     if (navigationIsActive) {
+
+                        if (getDistanceToCurrentNavPoint() <= 5)
+                            advanceCurrentNavPoint();
+
+                        mMapInstructionsView.append("\nDistance to next point: " + getDistanceToCurrentNavPoint());
+                        mMapInstructionsView.append("\nCurrent NavPoint index: " + Integer.toString(currentNavPointIndex) + "/" + Integer.toString(routePoints.size()));
+
                         // after assigning new raw headings
                         computeCurrentAverageHeading();
+
+                        Double heading
                         String toSend = getLetterFromAngle(currentAverageHeading);
                         sendData(toSend);
                     }
-                    */
 
 
                     if (!paused) {
@@ -293,15 +301,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public double getBearingToSend() {
-        //double bearing = get
+        double intendedBearing = getBearingToCurrentNavPoint();
+        double realBearing = currentAverageHeading;
         return 0;
     }
 
     public void computeCurrentAverageHeading() {
         // TODO: Insure these are all 0 <= theta < 360
-        double heading1 = currentBearingFromTwoLocations;
-        double heading2 = currentLocation.getBearing();
-        //double heading3 =
+        if (currentLocation != null && currentBearingFromTwoLocations != -1 && avgThreeMagHeadings() != 0) {
+            double heading1 = currentBearingFromTwoLocations;
+            double heading2 = currentLocation.getBearing();
+            double heading3 = avgThreeMagHeadings();
+            currentAverageHeading = (heading1 + heading2 + heading3) / 3;
+        }
+        else if (currentBearingFromTwoLocations != -1)
+            currentAverageHeading = currentBearingFromTwoLocations;
+        else if (currentLocation != null)
+            currentAverageHeading = currentLocation.getBearing();
+        else
+            currentAverageHeading = 0;
     }
 
     public void toggleNavigationIsActive() {
@@ -339,7 +357,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
+    // Not used at this point, I don't think...
     // returns the middle angle formed between all three angles, in that order
     // Gives Minor Angle!
     public double getFormedAngle(Location inputOne, Location inputTwo, Location inputThree) {
@@ -480,6 +498,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 addMarkersToMap(results);
                 addPolyline(results);
+
+                toggleNavigationIsActive(); // Start navigation once we have a directions result
 
                 // See all points
                 /*
