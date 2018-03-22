@@ -863,7 +863,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 {
                                     // Receive string with double such that value of theta is  0 <= theta < 360
                                     //bluetoothTextView.append("\"" + string + "\"endOfString");
-                                    bluetoothTextView.append(string + "\n");
+                                    bluetoothTextView.append("\n" + string);
                                     updateMagneticCompassHeadingArray(string);
                                 }
                             });
