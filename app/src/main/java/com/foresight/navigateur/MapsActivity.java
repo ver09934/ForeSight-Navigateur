@@ -50,7 +50,10 @@ import java.util.concurrent.TimeUnit;
 
 /*
 Welcome to the land of spaghetti code...
- */
+TODO: Update hardcoded strings by moving them to strings.xml
+TODO: Convert methods to getters instead of setting fields to insure values are recent
+TODO: If values are reliable, add magnetic compass data into bearing average
+*/
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapLongClickListener {
 
@@ -146,6 +149,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Integer currentNavPointIndex = null;
     private boolean navigationIsActive = false;
 
+    private String lastSentString = "";
+
     //----------------------Setup Location and Heading Arrays-------------------------------
 
     public void setupArrays() {
@@ -218,10 +223,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMapInstructionsView.append("\nBearing to take to next point: " + getBearingToSend());
                         mMapInstructionsView.append("\nCurrent NavPoint index: " + Integer.toString(currentNavPointIndex) + "/" + Integer.toString(routePoints.size()));
 
-                        sendData(getLetterFromAngle(getBearingToSend()));
+                        // Only send letter if value has changed
+                        String letterToSend = getLetterFromAngle(getBearingToSend());
+                        if ( !lastSentString.equals(letterToSend) ) {
+                            sendData(letterToSend);
+                            lastSentString = letterToSend;
+                        }
 
                         updateCameraBearing();
-
                     }
 
                     zoomFirstTime();
@@ -312,16 +321,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double sum = 0;
         double denom = 0;
 
+        int oneLocationWeight = 1;
+        int twoLocationWeight = 1;
+        int magneticCompassWeight = 1;
+
         // if (currentMagneticCompassHeading != null) {}
         if (currentLocation != null) {
-            sum += currentLocation.getBearing();
-            denom++;
+            sum += currentLocation.getBearing() * oneLocationWeight;
+            denom += oneLocationWeight;
         }
 
         if (currentBearingFromTwoLocations != null) {
-            sum += currentBearingFromTwoLocations;
-            denom++;
+            sum += currentBearingFromTwoLocations * twoLocationWeight;
+            denom += twoLocationWeight;
         }
+
+        // TODO: Uncomment if magnetic data becomes reliable
+        /*
+        if (currentBearingFromTwoLocations != null) {
+            sum += currentBearingFromTwoLocations * magneticCompassWeight;
+            denom += magneticCompassWeight;
+        }
+        */
 
         if (denom != 0) {
             return sum / denom;
