@@ -553,7 +553,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void updateCameraBearing() {
         if ( mMap == null) return;
 
-        float CameraBearing = (currentAvgMagneticCompassHeading != null) ? currentAvgMagneticCompassHeading.floatValue() : mMap.getCameraPosition().bearing;
+        // float CameraBearing = (currentAvgMagneticCompassHeading != null) ? currentAvgMagneticCompassHeading.floatValue() : mMap.getCameraPosition().bearing;
+        float CameraBearing = (float) getCurrentAverageHeading();
 
         CameraPosition camPos = CameraPosition
                 .builder(mMap.getCameraPosition())
