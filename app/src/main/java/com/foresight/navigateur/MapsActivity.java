@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -103,8 +105,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //==================================== MAPS ===========================================================
     //=====================================================================================================
 
-    private final int FASTEST_UPDATE_SPEED = 1000; //5000
-    private final int UPDATE_SPEED = 2000; //10000
+    private final int FASTEST_UPDATE_SPEED = 500; // Fastest location update speed in milliseconds
+    private final int UPDATE_SPEED = 1000; // Fastest location update speed in milliseconds
+
+    private final int WAYPOINT_DISTANCE_THRESHOLD = 20; // Distance to waypoint before next point triggered
 
     private Double[] magneticCompassHeadingArray = new Double[20];
     private Double currentMagneticCompassHeading = null;
@@ -216,7 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (currentNavPointIndex == null)
                             setFirstNavPoint();
 
-                        if (getDistanceToCurrentNavPoint() <= 10)
+                        if (getDistanceToCurrentNavPoint() <= WAYPOINT_DISTANCE_THRESHOLD)
                             advanceCurrentNavPoint();
 
                         mMapInstructionsView.append("\nDistance to next point: " + getDistanceToCurrentNavPoint());
@@ -436,6 +440,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 haveRoute = true;
 
+                // Visualize threshold diameters around waypoints (routePoints list created in addPolyline)
+                //if (routePoints != null) {
+                    for (LatLng latLng : routePoints) {
+                        mMap.addCircle(new CircleOptions()
+                                .center(latLng)
+                                .radius(WAYPOINT_DISTANCE_THRESHOLD)
+                                .strokeWidth(0)
+                                //.fillColor( Color.argb(180, Color.red(255), Color.green(0), Color.blue(0)) ));
+                                .fillColor( Color.argb(64, 41, 183, 20) ));
+                                //.fillColor( 0x0000ff00 ));
+                    }
+                //}
+
+
             } catch (com.google.maps.errors.ApiException e) {
                 e.printStackTrace();
             } catch (java.lang.InterruptedException e) {
@@ -467,7 +485,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addPolyline(DirectionsResult results) {
         List<LatLng> decodedPath = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
-
         routePoints = decodedPath; //Make set of route points accessible by other methods
     }
 
