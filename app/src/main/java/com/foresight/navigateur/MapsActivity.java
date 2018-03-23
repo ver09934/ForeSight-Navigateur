@@ -103,8 +103,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private final int FASTEST_UPDATE_SPEED = 1000; //5000
     private final int UPDATE_SPEED = 2000; //10000
 
-    private double[] magneticCompassHeadingArray = new double[20];
+    private Double[] magneticCompassHeadingArray = new Double[20];
     private Double currentMagneticCompassHeading = null;
+    private Double currentAvgMagneticCompassHeading = null;
 
     // Locations obtained using play services location
     private Location[] currentLocationArray = new Location[20];
@@ -149,7 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setupArrays() {
         for (int i = 0; i < magneticCompassHeadingArray.length; i++) {
-            magneticCompassHeadingArray[i] = -1;
+            magneticCompassHeadingArray[i] = null;
         }
         for (int i = 0; i < currentLocationArray.length; i++) {
             currentLocationArray[i] = null;
@@ -219,7 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         sendData(getLetterFromAngle(getBearingToSend()));
 
-                        updateCameraBearing(mMap, (float) getCurrentAverageHeading());
+                        updateCameraBearing();
 
                     }
 
@@ -528,16 +529,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void updateCameraBearing(GoogleMap googleMap, float bearing) {
-        if ( googleMap == null) return;
+    private void updateCameraBearing() {
+        if ( mMap == null) return;
+
+        float CameraBearing = (currentAvgMagneticCompassHeading != null) ? currentAvgMagneticCompassHeading.floatValue() : mMap.getCameraPosition().bearing;
+
         CameraPosition camPos = CameraPosition
-                .builder(
-                        googleMap.getCameraPosition() // current Camera
-                )
-                .bearing(bearing)
+                .builder(mMap.getCameraPosition())
+                .bearing(CameraBearing)
                 .target(getLatLngFromLocation(currentLocation))
                 .build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPos));
+
+        mMapInstructionsView.append("Updated Camera Position to " + Float.toString(CameraBearing));
     }
 
     //------------------------User Functions------------------------------
@@ -577,6 +581,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //=============================================== BLUETOOTH ====================================================
     //==============================================================================================================
 
+    // TODO: Make this a getter instead of an updater
     public void updateMagneticCompassHeadingArray(String inputString) {
         try {
             double heading = Double.parseDouble(inputString);
@@ -589,11 +594,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             currentMagneticCompassHeading = magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1];
 
+            updateAvgMagneticCompassHeading();
+
         }
 
         catch (java.lang.NumberFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateAvgMagneticCompassHeading() {
+        int sum = 0;
+        int denom = 0;
+
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1] != null) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 1];
+            denom++;
+        }
+
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2] != null) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 2];
+            denom++;
+        }
+
+        if (magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3] != null) {
+            sum += magneticCompassHeadingArray[magneticCompassHeadingArray.length - 3];
+            denom++;
+        }
+
+        if (denom != 0)
+            currentAvgMagneticCompassHeading = (double) sum / denom;
+        else
+            currentAvgMagneticCompassHeading = (double) 0;
     }
 
     //----------------
