@@ -31,33 +31,77 @@
                 android:onClick="bluetoothFunctionTwo"
                 android:text="@string/bluetooth_function_two" />
 
-        </LinearLayout>
-
-        <!--
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
             <Button
                 android:id="@+id/bluetooth_function_three"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:onClick="bluetoothFunctionThree"
-                android:text="@string/reserved_button" />
-
-            <Button
-                android:id="@+id/bluetooth_function_four"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:onClick="bluetoothFunctionFour"
-                android:text="@string/reserved_button" />
+                android:text="@string/bluetooth_function_three" />
 
         </LinearLayout>
 
-        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/test_a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionA"
+                android:text="@string/test_button_a" />
+
+            <Button
+                android:id="@+id/test_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionB"
+                android:text="@string/test_button_b" />
+
+            <Button
+                android:id="@+id/test_c"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionC"
+                android:text="@string/test_button_c" />
+
+            <Button
+                android:id="@+id/test_d"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionD"
+                android:text="@string/test_button_d" />
+
+            <Button
+                android:id="@+id/test_e"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionE"
+                android:text="@string/test_button_e" />
+
+            <Button
+                android:id="@+id/test_f"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionF"
+                android:text="@string/test_button_f" />
+
+            <Button
+                android:id="@+id/test_g"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="testFunctionG"
+                android:text="@string/test_button_g" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/bluetooth_text_view"
