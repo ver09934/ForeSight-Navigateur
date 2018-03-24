@@ -201,6 +201,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     }
 
     public void bluetoothFunctionThree(View view) {
+        findPairedDevices();
         BTconnect();
         beginListenForData();
     }
