@@ -1,6 +1,6 @@
 # ForeSight Navigateur
 
-The navigation app for the ForeSight project. For the embedded software used on the anklet, see [here](https://example.com).
+The navigation app for the ForeSight project. For the embedded software used on the anklet, see here: [ForeSight-Anklet](https://github.com/rmenon1008/ForeSight-Anklet).
 
 ## Setup
 First, you must create the gitignored file ```app/src/debug/res/values/google_maps_api.xml```, which is ignored in ```/app/.gitignore```. After you do this, copy the following text into it:
