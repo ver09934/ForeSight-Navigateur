@@ -18,3 +18,8 @@ First, you must create the gitignored file ```app/src/debug/res/values/google_ma
 	* Need Google Play Services SDK Component (to allow use of the Google Location Services API) - more info about this can be found [here](https://developers.google.com/android/guides/setup)
 	* Just install all the things it tells you to when IntelliJ/Android Studio yells at you...
 
+## Code Resources
+The following resources are among those used to help get this project up and running:
+* [Google Maps Directions API - AndroidPub](https://android.jlelse.eu/google-maps-directions-api-5b2e11dee9b0)
+* [Control an Arduino with Bluetooth - All About Circuits](https://www.allaboutcircuits.com/projects/control-an-arduino-using-your-phone/)
+and of course, the very helpful [Android Development Guides](https://developer.android.com/guide/index.html).
