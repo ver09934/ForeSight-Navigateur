@@ -22,4 +22,5 @@ First, you must create the gitignored file ```app/src/debug/res/values/google_ma
 The following resources are among those used to help get this project up and running:
 * [Google Maps Directions API - AndroidPub](https://android.jlelse.eu/google-maps-directions-api-5b2e11dee9b0)
 * [Control an Arduino with Bluetooth - All About Circuits](https://www.allaboutcircuits.com/projects/control-an-arduino-using-your-phone/)
+
 and of course, the very helpful [Android Development Guides](https://developer.android.com/guide/index.html).
