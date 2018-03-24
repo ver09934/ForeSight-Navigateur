@@ -290,7 +290,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         else {
             Toast.makeText(getApplicationContext(), "Navigation completed!", Toast.LENGTH_LONG).show();
-            navigationIsActive = false;
+            toggleNavigationIsActive();
         }
     }
 
