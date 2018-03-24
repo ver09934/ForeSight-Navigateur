@@ -20,6 +20,7 @@
     <string name="test_button_e">e</string>
     <string name="test_button_f">f</string>
     <string name="test_button_g">g</string>
+    <string name="test_button_h">h</string>
 
     <!-- Other -->
     <string name="reserved_button">(Reserved Button)</string>

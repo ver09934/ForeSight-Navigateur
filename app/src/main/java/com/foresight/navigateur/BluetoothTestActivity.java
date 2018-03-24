@@ -88,6 +88,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
                         if (device.getAddress().equals(MapsActivity.DEVICE_ADDRESS)) {
 
                             displayText += device.getName() + spacing + device.getAddress() + spacing + "(Selected Device)\n";
+                            mBluetoothDevice = device;
+                            break;
 
                         }
                         else {
@@ -107,7 +109,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
 
     public void BTconnect() {
 
-        boolean connected = true;
+        connected = true;
 
         mBluetoothTextView.setText("");
 
@@ -231,4 +233,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
         sendData("g");
     }
 
+    public void testFunctionH(View view) {
+        sendData("h");
+    }
 }
